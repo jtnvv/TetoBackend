@@ -1,0 +1,32 @@
+version: '3.8'
+
+services:
+  postgresdb:
+    image: postgres
+    restart: always
+    env_file: .env
+    environment:
+      - POSTGRES_USER=$POSTGRES_USER
+      - POSTGRES_PASSWORD=$POSTGRES_ROOT_PASSWORD
+      - POSTGRES_DB=$POSTGRES_DB
+    ports:
+      - $POSTGRES_LOCAL_PORT:$POSTGRES_DOCKER_PORT
+    volumes:
+      - .:/var/lib/postgres
+  app:
+    container_name: teto-api
+    depends_on:
+      - postgresdb
+    build: .
+    command: ["npm", "run", "dev"]
+    env_file: .env
+    ports:
+      - $NODE_LOCAL_PORT:$NODE_DOCKER_PORT
+    environment:
+      - DB_HOST=postgresdb
+      - DB_USER=$POSTGRES_USER
+      - DB_PASSWORD=$POSTGRES_ROOT_PASSWORD
+      - DB_NAME=$POSTGRES_DB
+      - DB_PORT=$POSTGRES_DOCKER_PORT
+    volumes:
+      - .:/app

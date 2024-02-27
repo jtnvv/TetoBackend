@@ -1,10 +1,12 @@
-FROM node:21
+
+FROM node:21 AS build
 
 WORKDIR "/app"
 
-COPY package.json .
-
-RUN npm install
-
 COPY . .
 
+RUN npm install --no-cache
+
+FROM build
+
+CMD ["tail", "-f", "/dev/null"]

@@ -1,12 +1,14 @@
-require("dotenv").config();
-const express = require("express");
-const app = express();
-const port = 8080;
+import app from './app.js';
+import 'dotenv/config'
+import {sequelize} from './database/database.js';
 
-app.get("/", (req, res) => {
-  res.send("Hello World!");
-});
-
-app.listen(port, () => {
-  console.log(`Example app listening on port ${port}`);
-});
+async function main() {
+  try{
+    await sequelize.authenticate();
+    app.listen(process.env.NODE_DOCKER_PORT, () => {
+      console.log("Server listening on port 8080");
+    });
+  } catch(error) {
+    console.log('Unable to connecto to database: ', error);
+  }
+}

@@ -17,10 +17,12 @@ exports.getUsers=async(req,res)=>{
 }
 
 exports.register=async(req,res)=>{
+    console.log("s1")
     const {email,password}=req.body
     try {
         const hashedPassword = await hash(password,10)
         await db.query('INSERT INTO users (email,password) values ($1 ,$2)',[email,hashedPassword])
+        console.log("s2") 
         return res.status(201).json({
             success: true,
             message: "registro exitoso"

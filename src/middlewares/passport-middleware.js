@@ -1,34 +1,42 @@
-const passport=require('passport')
-const{Strategy}=require('passport-jwt')
-const{SECRET}=require('../constants')
-const db=require('../db')
+import passport from 'passport';
+import pkg from "passport-jwt";
+import { server } from '../config/teto.js';
+import User from '../database/models/User.js';
 
-const cookieExtractor=function(req){
-    let token=null
-    if(req&&req.cookies)token=req.cookies['token']
+const { Strategy } = pkg;
+
+const cookieExtractor = function (req) {
+    let token = null
+    if (req && req.cookies) token = req.cookies['token']
     return token
 }
 
-const opts={
-    secretOrKey:SECRET,
+const opts = {
+    secretOrKey: server.secret,
     jwtFromRequest: cookieExtractor,
-
-}
+};
 
 passport.use(
-    new Strategy(opts,async({id},done)=>{
+    new Strategy(opts, async ({ id }, done) => {
         try {
-            const {rows}=await db.query('SELECT user_id,email FROM users WHERE user_id=$1',[id])
-            console.log(rows)
-            if(!rows.length){
-                throw new Error('401 no Autorizado')
+            console.log(id);
+            const res = await User.findOne({
+                where: {
+                    id: id,
+                },
+            });
+
+            if (!res) {
+                throw new Error("401 no Autorizado");
             }
 
-            let user={id:rows[0].user_id,email:rows[0].email}
-            return await done(null,user)
+            let user = { id: res.id, email: res.email };
+            return await done(null, user);
         } catch (err) {
-            console.error(err.message)
-            done(null,false)
+            console.error(err.message);
+            done(null, false);
         }
     })
-)
+);
+
+export default passport;

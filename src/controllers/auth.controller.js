@@ -1,12 +1,14 @@
-const db = require('../db')
-const {hash}=require('bcryptjs')
-const {sign}=require('jsonwebtoken')
-const {SECRET}=require('../constants')
+import sequelize from '../database/models/index.js';
+import bcrypt from "bcrypt";
+import pkg from "jsonwebtoken";
+import { server } from '../config/teto.js';
+import User from '../database/models/User.js';
 
+const { sign } = pkg;
 
-exports.getUsers=async(req,res)=>{
+export const getUsers = async (req,res) => {
     try {
-        const {rows}=await db.query('select user_id,email from users')
+        const {rows}=await sequelize.query('select id,email from users')
         return res.status(201).json({
             success:true,
             users: rows
@@ -16,34 +18,38 @@ exports.getUsers=async(req,res)=>{
     }
 }
 
-exports.register=async(req,res)=>{
-    console.log("s1")
-    const {email,password}=req.body
+export const register = async function(req,res){
+    const email = req.body.email;
+    const password = req.body.password;
     try {
-        const hashedPassword = await hash(password,10)
-        await db.query('INSERT INTO users (email,password) values ($1 ,$2)',[email,hashedPassword])
-        console.log("s2") 
+        const hashedPassword = await bcrypt.hash(password, 10);
+        
+        await User.create({
+          email: email,
+          password: hashedPassword,
+        });
+
+
         return res.status(201).json({
             success: true,
             message: "registro exitoso"
         })
-        console.log('Validación pasada')
     } catch (err) {
         console.error(err.message)
         return res.status(500).json({
-            error: err.message
+            error: err.message,
         })
     }
 }
 
-exports.login=async(req,res)=>{
+export const login = async (req,res) => {
     let user=req.user
     let payload={
-        id:user.user_id,
+        id:user.id,
         email: user.email
     }
     try {
-        const token = await sign(payload, SECRET)
+        const token = await sign(payload, server.secret)
         return res.status(200).cookie('token',token,{httpOnly:true}).json({
             success:true,
             message: 'login exitoso'
@@ -57,7 +63,7 @@ exports.login=async(req,res)=>{
     }
 }
 
-exports.protected=async(req,res)=>{
+export const protectedRoute = async (req,res) => {
     try {
         return res.status(201).json({
             info:'protected info',
@@ -67,7 +73,7 @@ exports.protected=async(req,res)=>{
     }
 }
 
-exports.logout=async(req,res)=>{
+export const logout = async (req,res) => {
    
     try {
         return res.status(200).clearCookie('token',{httpOnly:true}).json({

@@ -28,7 +28,6 @@ const loginFieldCheck=check('email').custom(async function(value, {req}){
       throw new Error('NO existe una cuenta con ese correo')
   }
 
-  console.log(user.password);
   const validPassword = await bcrypt.compare(req.body.password, user.password);
   if (!validPassword) {
     throw new Error("la clave no corresponde a ese correo");

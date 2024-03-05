@@ -19,7 +19,6 @@ const opts = {
 passport.use(
     new Strategy(opts, async ({ id }, done) => {
         try {
-            console.log(id);
             const res = await User.findOne({
                 where: {
                     id: id,

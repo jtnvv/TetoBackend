@@ -1,2 +1,2 @@
-const passport=require('passport')
-exports.userAuth=passport.authenticate('jwt',{session:false})
+import passport from "./passport-middleware.js";
+export const userAuth = passport.authenticate('jwt',{session:false});

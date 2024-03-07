@@ -13,7 +13,7 @@ import {userAuth} from '../middlewares/auth-middleware.js';
 const router=Router();
 
 router.get('/get-users',getUsers);
-router.get("/protected", userAuth, protectedRoute);
+router.get("/protected", userAuth({ability: "hola"}), protectedRoute);
 router.post('/register', registerValidation, validationMiddleware, register);
 router.post('/login', loginValidation, validationMiddleware,login);
 router.get('/logout',logout);

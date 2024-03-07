@@ -11,6 +11,7 @@ User.init(
     email: DataTypes.STRING,
     password: DataTypes.STRING,
     phone_number: DataTypes.STRING,
+    role: DataTypes.STRING,
   },
   {
     sequelize,

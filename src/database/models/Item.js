@@ -32,6 +32,7 @@ Item.init(
     tags: DataTypes.ARRAY(DataTypes.STRING),
     rating: DataTypes.INTEGER,
     category: DataTypes.ARRAY(DataTypes.ENUM(categories)),
+    stock: DataTypes.INTEGER,
   },
   {
     sequelize,

@@ -10,10 +10,11 @@ export const devDatabase = {
 };
 
 export const prodDatabase = {
-  HOST: "",
-  USER: "",
-  PASSWORD: "",
-  DB: "",
+  URL:process.env.STAGE_DB_URL,
+  HOST: process.env.STAGE_DB_HOST,
+  USER: process.env.STAGE_DB_USER,
+  PASSWORD: process.env.STAGE_DB_PASSWORD,
+  DB: process.env.STAGE_DB,
   DIALECT: "postgres",
 };
 

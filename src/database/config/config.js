@@ -16,10 +16,11 @@ export default {
     dialect: devDatabase.DIALECT,
   },
   production: {
+    url:prodDatabase.URL,
     username: prodDatabase.USER,
     password: prodDatabase.PASSWORD,
     database: prodDatabase.DB,
     host: prodDatabase.HOST,
-    dialect: devDatabase.DIALECT,
+    dialect: prodDatabase.DIALECT,
   },
 };

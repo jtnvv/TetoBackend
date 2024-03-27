@@ -7,7 +7,7 @@ export const getStore = async (req, res) => {
 export const createStore = async (req, res) => {
   try {
     const request = req.body;
-    const newStore = await Store.create({
+    await Store.create({
       name: request.name,
       city: request.city,
       email: request.email,

@@ -2,12 +2,13 @@ import { check } from 'express-validator';
 import sequelize from '../database/models/index.js';
 import bcrypt from "bcrypt";
 import User from '../database/models/User.js';
+import Store from '../database/models/Store.js';
 
 //password
 const password =check('password').isLength({min:6, max:15}).withMessage('La clave debe tener entre 6 y 15 caracteres');
 
 //email
-const email = check('email').isEmail().withMessage('Ingrese un correo válido');
+const email = check('email').isEmail().withMessage('El correo ingresado no es valido');
 
 // existe el email
 const emailExists = check('email').custom( async (value) => {
@@ -16,7 +17,7 @@ const emailExists = check('email').custom( async (value) => {
     });
     
     if (rowCounts) {
-      throw new Error("ya hay una cuenta con este correo");
+      throw new Error("Ya hay una cuenta registrada con ese correo");
     }
 });
 
@@ -25,18 +26,43 @@ const loginFieldCheck=check('email').custom(async function(value, {req}){
   const user = await User.findOne({where: { email: value}});
 
   if(user.rowCounts){
-      throw new Error('NO existe una cuenta con ese correo')
+      throw new Error('No existe una cuenta para ese correo')
   }
 
   const validPassword = await bcrypt.compare(req.body.password, user.password);
   if (!validPassword) {
-    throw new Error("la clave no corresponde a ese correo");
+    throw new Error("Clave incorrecta");
   }
 
   req.user = user;
 
 });
 
+//store login validation
+const loginStoreFieldCheck=check('email').custom(async function(value, {req}){
+  try{
+    const user = await Store.findOne({where: { email: value}});
+    
+    if(user.rowCounts){
+      throw new Error('No existe una cuenta para ese correo')
+    }
+    
+    const validPassword = await bcrypt.compare(req.body.password, user.password);
+    
+    if (!validPassword) {
+      throw new Error("Clave incorrecta");
+    }
+    req.user = user;
+  } catch (err) {
+    return res.status(500).json({
+      error:err.message,
+    })
+  }
+
+});
+
+
 export const registerValidation = [email, password, emailExists];
 export const loginValidation = [loginFieldCheck];
+export const loginStoreValidation = [loginStoreFieldCheck];
 

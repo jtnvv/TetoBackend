@@ -1,8 +1,8 @@
 import { Router } from "express";
-import { createItem, getItem } from "../controllers/item.controller.js";
+import {userAuth} from '../middlewares/auth-middleware.js';
+import { createItem } from "../controllers/item.controller.js";
 const router = Router();
 
-router.get('/item', getItem);
-router.post("/item", createItem);
+router.post("/store-item", userAuth({ability: "store_item"}), createItem);
 
 export default router;

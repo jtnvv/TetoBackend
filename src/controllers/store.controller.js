@@ -31,3 +31,15 @@ export const getStoreById = async (req, res) => {
     return await res.status(500).json({ message: error.message });
   }
 }
+
+export const getStores = async (req, res) => {
+  
+  try {
+    
+    const stores = await Store.findAll();
+    
+    return await res.status(200).json(stores);
+  } catch (error) {
+    return await res.status(500).json({ message: error.message });
+  }
+}

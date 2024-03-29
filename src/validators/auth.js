@@ -40,7 +40,7 @@ const loginFieldCheck=check('email').custom(async function(value, {req}){
 
 //store login validation
 const loginStoreFieldCheck=check('email').custom(async function(value, {req}){
-  try{
+ 
     const user = await Store.findOne({where: { email: value}});
     
     if(user.rowCounts){
@@ -53,11 +53,7 @@ const loginStoreFieldCheck=check('email').custom(async function(value, {req}){
       throw new Error("Clave incorrecta");
     }
     req.user = user;
-  } catch (err) {
-    return res.status(500).json({
-      error:err.message,
-    })
-  }
+  
 
 });
 

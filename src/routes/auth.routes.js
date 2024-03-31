@@ -18,7 +18,7 @@ router.get('/get-users',getUsers);
 router.post('/register', registerValidation, validationMiddleware, register);
 router.post('/login', loginValidation, validationMiddleware, login);
 router.post('/login-store', loginStoreValidation,validationMiddleware, brandLogin);
-app.post("/send_recovery_email", sendEmail);
+router.post("/send_recovery_email", sendEmail);
 
 router.get('/logout',logout);
 

@@ -5,6 +5,7 @@ import { server } from '../config/teto.js';
 import User from '../database/models/User.js';
 import Store from '../database/models/Store.js';
 import { server_mail, server_mail_pass } from "../config/teto.js";
+import nodemailer from 'nodemailer';
 
 const { sign } = pkg;
 
@@ -133,10 +134,11 @@ export const logout = async (req, res) => {
 }
 
 export const sendEmail = async (req, res) => {
-    let emailReceptor = req.recipient_email
-    let codigoConfirmacion = req.OTP
+    let emailReceptor = req.body.recipient_email
+    let codigoConfirmacion = req.body.OTP
     try {
         return new Promise((resolve, reject) => {
+            console.log(server_mail, " ",server_mail_pass)
             var transporter = nodemailer.createTransport({
                 service: "hotmail",
                 auth: {
@@ -164,10 +166,10 @@ export const sendEmail = async (req, res) => {
           <div style="border-bottom:1px solid #eee">
             <a href="" style="font-size:1.4em;color: #00466a;text-decoration:none;font-weight:600">Teto Ropa Colombiana</a>
           </div>
-          <p style="font-size:1.1em">Hi,</p>
-          <p>Thank you for choosing TETo. Usa el siguiente código para recuperar tu cuenta. El código es valido por 5 minutos</p>
+          <p style="font-size:1.1em">Sup,</p>
+          <p>Gracias por escoger TETO. Usa el siguiente código para recuperar tu cuenta. El código es valido por 5 minutos</p>
           <h2 style="background: #00466a;margin: 0 auto;width: max-content;padding: 0 10px;color: #fff;border-radius: 4px;">${codigoConfirmacion}</h2>
-          <p style="font-size:0.9em;">Regards,<br />Koding 101</p>
+          <p style="font-size:0.9em;">Saludos desde,<br />TETO</p>
           <hr style="border:none;border-top:1px solid #eee" />
           <div style="float:right;padding:8px 0;color:#aaa;font-size:0.8em;line-height:1;font-weight:300">
             <p>Teto</p>

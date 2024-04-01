@@ -70,28 +70,7 @@ export const registerBrand = async function(req,res){
     }
 }
 
-export const login = async (req,res) => {
-    let user=req.user
-    let payload={
-        id: user.id,
-        email: user.email
-    }
-    try {
-        const token = await sign(payload, server.secret)
-        return res.status(200).cookie('token',token,{httpOnly:true}).json({
-            success:true,
-            message: 'login exitoso'
-        })       
-    } catch (err) {
-        console.error(err.message)
-        return res.status(500).json({
-            error:err.message,
-        })
-        
-    }
-}
-
-export const brandLogin = async (req,res) => {    
+export const login = async (req,res) => {    
     try {
         let payload={
             id: req.user.id,

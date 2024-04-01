@@ -56,6 +56,11 @@ module.exports = {
         allowNull: true,
         defaultValue: 0
       },
+      priority: {
+        type: Sequelize.INTEGER,
+        allowNull: false,
+        defaultValue: 0
+      },
       store_id: {
         type: Sequelize.INTEGER,
         allowNull: false,

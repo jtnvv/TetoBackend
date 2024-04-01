@@ -23,7 +23,8 @@ const emailExists = check('email').custom( async (value) => {
 
 //login validation
 const loginFieldCheck=check('email').custom(async function(value, {req}){
-  const user = await User.findOne({where: { email: value}});
+  let user = await User.findOne({where: { email: value}});
+  user = !user ? await Store.findOne({where: { email: value}}) : user;
 
   if(user.rowCounts){
       throw new Error('No existe una cuenta para ese correo')
@@ -36,33 +37,27 @@ const loginFieldCheck=check('email').custom(async function(value, {req}){
 
   req.user = user;
 
-});
-
-//store login validation
-const loginStoreFieldCheck=check('email').custom(async function(value, {req}){
-  try{
-    const user = await Store.findOne({where: { email: value}});
-    
-    if(user.rowCounts){
-      throw new Error('No existe una cuenta para ese correo')
-    }
-    
-    const validPassword = await bcrypt.compare(req.body.password, user.password);
-    
-    if (!validPassword) {
-      throw new Error("Clave incorrecta");
-    }
-    req.user = user;
-  } catch (err) {
-    return res.status(500).json({
-      error:err.message,
-    })
+});export const login = async (req,res) => {
+  let user=req.user
+  let payload={
+      id: user.id,
+      email: user.email
   }
-
-});
-
+  try {
+      const token = await sign(payload, server.secret)
+      return res.status(200).cookie('token',token,{httpOnly:true}).json({
+          success:true,
+          message: 'login exitoso'
+      })       
+  } catch (err) {
+      console.error(err.message)
+      return res.status(500).json({
+          error:err.message,
+      })
+      
+  }
+}
 
 export const registerValidation = [email, password, emailExists];
 export const loginValidation = [loginFieldCheck];
-export const loginStoreValidation = [loginStoreFieldCheck];
 

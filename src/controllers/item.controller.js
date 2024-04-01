@@ -1,6 +1,7 @@
 import Item from "../database/models/Item.js";
 import Store from "../database/models/Store.js";
 import { categories } from "../config/teto.js";
+import { Op } from 'sequelize';
 
 export const getItem = async (req, res) => {
   await res.send("Item 1");
@@ -46,6 +47,26 @@ export const getItemsByStore = async (req, res) => {
     const items = await Item.findAll({
       where: {
         store_id: store_id,
+      },
+    });
+    return await res.status(200).json(items);
+  } catch (error) {
+    return await res.status(500).json({ message: error.message });
+  }
+}
+
+export const getCategories = async (req, res) => {
+  return await res.status(200).json({ categories: categories });
+}
+
+export const getItemsByCategory = async (req, res) => {
+  try {
+    const category = req.params.category;
+    const items = await Item.findAll({
+      where: {
+        categories: {
+          [Op.contains]: [category],
+        },
       },
     });
     return await res.status(200).json(items);

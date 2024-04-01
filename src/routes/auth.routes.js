@@ -4,13 +4,11 @@ import {
   register,
   login,
   logout,
-  brandLogin,
   sendEmail,
   changePassword,
 } from "../controllers/auth.controller.js";
 import { validationMiddleware } from "../middlewares/validations-middleware.js";
-import { registerValidation, loginValidation, loginStoreValidation} from "../validators/auth.js";
-
+import { registerValidation, loginValidation } from "../validators/auth.js";
 
 const router=Router();
 

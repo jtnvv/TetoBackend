@@ -23,7 +23,8 @@ const emailExists = check('email').custom( async (value) => {
 
 //login validation
 const loginFieldCheck=check('email').custom(async function(value, {req}){
-  const user = await User.findOne({where: { email: value}});
+  let user = await User.findOne({where: { email: value}});
+  user = !user ? await Store.findOne({where: { email: value}}) : user;
 
   if(user.rowCounts){
       throw new Error('No existe una cuenta para ese correo')
@@ -38,27 +39,6 @@ const loginFieldCheck=check('email').custom(async function(value, {req}){
 
 });
 
-//store login validation
-const loginStoreFieldCheck=check('email').custom(async function(value, {req}){
- 
-    const user = await Store.findOne({where: { email: value}});
-    
-    if(user.rowCounts){
-      throw new Error('No existe una cuenta para ese correo')
-    }
-    
-    const validPassword = await bcrypt.compare(req.body.password, user.password);
-    
-    if (!validPassword) {
-      throw new Error("Clave incorrecta");
-    }
-    req.user = user;
-  
-
-});
-
-
 export const registerValidation = [email, password, emailExists];
 export const loginValidation = [loginFieldCheck];
-export const loginStoreValidation = [loginStoreFieldCheck];
 

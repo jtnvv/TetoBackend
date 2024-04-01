@@ -1,7 +1,5 @@
 import passport from "./passport-middleware.js";
 import { role } from "../config/role.js";
-import User from "../database/models/User.js";
-import Store from "../database/models/Store.js";
 
 export const userAuth = ({ability}) => (req, res, next) => {
     passport.authenticate('jwt', async (err, user) => {

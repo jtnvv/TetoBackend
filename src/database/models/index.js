@@ -1,11 +1,11 @@
 import Sequelize from "sequelize";
 import dbConfig from "../config/config.js";
 
-const environment = process.env.NODE_ENV; 
+const environment = process.env.NODE_ENV;
 const config = dbConfig[environment];
 let sequelize;
 
-if(config.url){
+if (config.url) {
   sequelize = new Sequelize(config.url,
     {
       dialect: config.dialect,
@@ -22,7 +22,7 @@ if(config.url){
     }
   );
 }
-  
+
 async function testConnection() {
   try {
     await sequelize.authenticate();

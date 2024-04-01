@@ -20,7 +20,7 @@ export const updatePass = async (req, res) => {
   try {
     const mail = req.body.mail;
     const pass = req.body.pass;
-    
+
     await User.update({ password: pass }, {
       where: {
         email: mail,

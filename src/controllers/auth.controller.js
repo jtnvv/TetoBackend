@@ -1,7 +1,7 @@
 import sequelize from '../database/models/index.js';
 import bcrypt from "bcrypt";
 import pkg from "jsonwebtoken";
-import { server } from '../config/teto.js';
+import { emailTemplate, server } from '../config/teto.js';
 import User from '../database/models/User.js';
 import Store from '../database/models/Store.js';
 import { server_mail, server_mail_pass } from "../config/teto.js";
@@ -22,10 +22,16 @@ export const getUsers = async (req, res) => {
 }
 
 export const register = async function (req, res) {
-    const email = req.body.email;
-    const password = req.body.password;
     try {
+        const email = req.body.email;
+        const password = req.body.password;
         const hashedPassword = await bcrypt.hash(password, 10);
+
+        if (await Store.findOne({ where: { email: email } })){
+            return res.status(409).json({
+                message: "El correo ya se encuentra registrado",
+            })
+        }
 
         await User.create({
             email: email,
@@ -49,16 +55,21 @@ export const register = async function (req, res) {
 
 export const registerBrand = async function (req, res) {
     try {
-
         const request = req.body;
         const hashedPassword = await bcrypt.hash(request.password, 10);
+
+        if (await User.findOne({ where: { email: request.email } })) {
+            return res.status(409).json({
+                message: "El correo ya se encuentra registrado",
+            })
+        }
 
         await Store.create({
             name: request.name,
             city: request.address,
             email: request.email,
             password: hashedPassword,
-            phone_number: request.phone,
+            phone_number: request.phone_number,
             description: request.description.toLowerCase(),
             logo: "logo.jpg", //implementar despues
         });
@@ -73,9 +84,9 @@ export const registerBrand = async function (req, res) {
     }
 }
 
-export const login = async (req,res) => {    
+export const login = async (req, res) => {
     try {
-        let payload={
+        let payload = {
             id: req.user.id,
             email: req.user.email
         }
@@ -111,21 +122,20 @@ export const logout = async (req, res) => {
 }
 
 export const changePassword = async (req, res) => {
-    console.log(req.body.email," ",req.body.pass)
     const mail = req.body.email;
     const pass = req.body.pass;
     try {
-        
         await User.update({ password: pass }, {
-          where: {
-            email: mail,
-          },
+            where: {
+                email: mail,
+            },
         });
-    
-        await res.status(200).json({ message: "password Updated" });
-      } catch (error) {
+
+        return await res.status(200).json({ message: "Password Updated" });
+
+    } catch (error) {
         await res.status(500).json({ message: error.message });
-      }
+    }
 }
 
 export const sendEmail = async (req, res) => {
@@ -133,7 +143,6 @@ export const sendEmail = async (req, res) => {
     let codigoConfirmacion = req.body.OTP
     try {
         return new Promise((resolve, reject) => {
-            console.log(server_mail, " ",server_mail_pass)
             var transporter = nodemailer.createTransport({
                 service: "hotmail",
                 auth: {
@@ -141,57 +150,26 @@ export const sendEmail = async (req, res) => {
                     pass: server_mail_pass,
                 },
             });
-    
+
             const mail_configs = {
                 from: server_mail,
                 to: emailReceptor,
                 subject: "Teto: Ropa colombiana PASSWORD RECOVERY",
-                html: `<!DOCTYPE html>
-      <html lang="en" >
-      <head>
-        <meta charset="UTF-8">
-        <title>CodePen - OTP Email Template</title>
-        
-      
-      </head>
-      <body>
-      <!-- partial:index.partial.html -->
-      <div style="font-family: Helvetica,Arial,sans-serif;min-width:1000px;overflow:auto;line-height:2">
-        <div style="margin:50px auto;width:70%;padding:20px 0">
-          <div style="border-bottom:1px solid #eee">
-            <a href="" style="font-size:1.4em;color: #00466a;text-decoration:none;font-weight:600">Teto Ropa Colombiana</a>
-          </div>
-          <p style="font-size:1.1em">Sup,</p>
-          <p>Gracias por escoger TETO. Usa el siguiente código para recuperar tu cuenta. El código es valido por 5 minutos</p>
-          <h2 style="background: #00466a;margin: 0 auto;width: max-content;padding: 0 10px;color: #fff;border-radius: 4px;">${codigoConfirmacion}</h2>
-          <p style="font-size:0.9em;">Saludos desde,<br />TETO</p>
-          <hr style="border:none;border-top:1px solid #eee" />
-          <div style="float:right;padding:8px 0;color:#aaa;font-size:0.8em;line-height:1;font-weight:300">
-            <p>Teto</p>
-            <p>Ropa</p>
-            <p>Colombia</p>
-          </div>
-        </div>
-      </div>
-      <!-- partial -->
-        
-      </body>
-      </html>`,
+                html: emailTemplate(codigoConfirmacion),
             };
+
             transporter.sendMail(mail_configs, function (error, info) {
                 if (error) {
-                    console.log(error);
                     return reject({ message: `An error has occured` });
                 }
                 return resolve({ message: "Email sent succesfuly" });
             });
         });
-        
+
     } catch (err) {
-        console.error(err.message)
         return res.status(500).json({
             error: err.message,
         })
     }
-    
+
 }

@@ -4,7 +4,7 @@ module.exports = {
   async up(queryInterface, Sequelize) {
     const categories = await import("../../config/teto.js").then(
       (module) => module.categories
-      );
+    );
     await queryInterface.createTable("items", {
       id: {
         allowNull: false,

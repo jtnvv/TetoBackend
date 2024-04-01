@@ -5,14 +5,14 @@ import cors from 'cors';
 import passport from 'passport';
 import itemRoutes from './routes/item.routes.js';
 import storeRoutes from "./routes/store.routes.js";
-import authRoutes  from './routes/auth.routes.js';
+import authRoutes from './routes/auth.routes.js';
 
 const app = express();
 
 // Middleware
 app.use(express.json())
 app.use(cookieParser())
-app.use(cors({origin:client.url,credentials:true}))
+app.use(cors({ origin: client.url, credentials: true }))
 app.use(passport.initialize())
 
 // Routes

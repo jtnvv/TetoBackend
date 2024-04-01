@@ -10,17 +10,15 @@ import {
 import { validationMiddleware } from "../middlewares/validations-middleware.js";
 import { registerValidation, loginValidation } from "../validators/auth.js";
 
-const router=Router();
+const router = Router();
 
-router.get('/get-users',getUsers);
-
+router.get('/get-users', getUsers);
 router.post('/register', registerValidation, validationMiddleware, register);
 router.post('/login', loginValidation, validationMiddleware, login);
-router.post('/login-store', loginStoreValidation,validationMiddleware, brandLogin);
 router.post("/send_recovery_email", sendEmail);
 router.post("/change-password", changePassword);
 
 
-router.get('/logout',logout);
+router.get('/logout', logout);
 
 export default router;

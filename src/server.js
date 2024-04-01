@@ -1,12 +1,6 @@
-require("dotenv").config();
-const express = require("express");
-const app = express();
-const port = 8080;
+import app from './app.js';
+import {node} from './config/teto.js';
 
-app.get("/", (req, res) => {
-  res.send("Hello World!");
-});
-
-app.listen(port, () => {
-  console.log(`Example app listening on port ${port}`);
+app.listen(node.port || 8080, () => {
+  console.log(`Server listening on port ${node.port || '8080'}`);
 });

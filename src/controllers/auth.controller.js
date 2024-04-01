@@ -133,6 +133,10 @@ export const logout = async (req, res) => {
     }
 }
 
+export const changePassword = async (req, res) => {
+    console.log(req.body.email," ",req.body.pass)
+}
+
 export const sendEmail = async (req, res) => {
     let emailReceptor = req.body.recipient_email
     let codigoConfirmacion = req.body.OTP

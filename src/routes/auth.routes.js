@@ -6,6 +6,7 @@ import {
   logout,
   brandLogin,
   sendEmail,
+  changePassword,
 } from "../controllers/auth.controller.js";
 import { validationMiddleware } from "../middlewares/validations-middleware.js";
 import { registerValidation, loginValidation, loginStoreValidation} from "../validators/auth.js";
@@ -19,6 +20,8 @@ router.post('/register', registerValidation, validationMiddleware, register);
 router.post('/login', loginValidation, validationMiddleware, login);
 router.post('/login-store', loginStoreValidation,validationMiddleware, brandLogin);
 router.post("/send_recovery_email", sendEmail);
+router.post("/change-password", changePassword);
+
 
 router.get('/logout',logout);
 

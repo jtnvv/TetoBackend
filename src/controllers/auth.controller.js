@@ -135,6 +135,20 @@ export const logout = async (req, res) => {
 
 export const changePassword = async (req, res) => {
     console.log(req.body.email," ",req.body.pass)
+    const mail = req.body.email;
+    const pass = req.body.pass;
+    try {
+        
+        await User.update({ password: pass }, {
+          where: {
+            email: mail,
+          },
+        });
+    
+        await res.status(200).json({ message: "password Updated" });
+      } catch (error) {
+        await res.status(500).json({ message: error.message });
+      }
 }
 
 export const sendEmail = async (req, res) => {

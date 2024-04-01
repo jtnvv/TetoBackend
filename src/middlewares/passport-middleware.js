@@ -25,7 +25,7 @@ passport.use(
                     id: id,
                 },
             });
-            
+
             if (!res) {
                 res = await Store.findOne({
                     where: {
@@ -37,7 +37,7 @@ passport.use(
             if (!res) {
                 throw new Error("401 no Autorizado");
             }
-            
+
             let user = res;
             return await done(null, user);
         } catch (err) {

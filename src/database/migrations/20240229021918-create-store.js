@@ -42,7 +42,7 @@ module.exports = {
         type: Sequelize.STRING,
         allowNull: true,
       },
-      role:{
+      role: {
         type: Sequelize.STRING,
         allowNull: false,
         defaultValue: "brand"

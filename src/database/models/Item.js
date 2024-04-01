@@ -16,6 +16,7 @@ Item.init(
     rating: DataTypes.INTEGER,
     categories: DataTypes.ARRAY(DataTypes.STRING),
     stock: DataTypes.INTEGER,
+    priority: DataTypes.INTEGER,
   },
   {
     sequelize,

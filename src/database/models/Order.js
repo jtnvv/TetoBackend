@@ -14,7 +14,7 @@ const Order = class extends Model {
     });
     Order.belongsTo(Store, {
       foreignKey: {
-        name:'store_id',
+        name: 'store_id',
         allowNull: false,
       },
     });

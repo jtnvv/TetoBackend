@@ -15,3 +15,20 @@ export const createUser = async (req, res) => {
     await res.status(500).json({ message: error.message });
   }
 };
+
+export const updatePass = async (req, res) => {
+  try {
+    const mail = req.body.mail;
+    const pass = req.body.pass;
+
+    await User.update({ password: pass }, {
+      where: {
+        email: mail,
+      },
+    });
+
+    await res.status(200).json({ message: "password Updated" });
+  } catch (error) {
+    await res.status(500).json({ message: error.message });
+  }
+};

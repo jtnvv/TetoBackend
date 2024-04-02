@@ -16,7 +16,7 @@ export default {
     dialect: devDatabase.DIALECT,
   },
   production: {
-    url:prodDatabase.URL,
+    url: prodDatabase.URL,
     username: prodDatabase.USER,
     password: prodDatabase.PASSWORD,
     database: prodDatabase.DB,

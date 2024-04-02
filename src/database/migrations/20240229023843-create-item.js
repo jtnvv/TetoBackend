@@ -4,7 +4,7 @@ module.exports = {
   async up(queryInterface, Sequelize) {
     const categories = await import("../../config/teto.js").then(
       (module) => module.categories
-      );
+    );
     await queryInterface.createTable("items", {
       id: {
         allowNull: false,
@@ -16,13 +16,14 @@ module.exports = {
         type: Sequelize.STRING,
         allowNull: false,
         primaryKey: true,
+        unique: true
       },
       colors: {
         type: Sequelize.ARRAY(Sequelize.STRING),
         allowNull: false,
       },
       colors_available: {
-        type: Sequelize.ARRAY(Sequelize.INTEGER),
+        type: Sequelize.ARRAY(Sequelize.BOOLEAN),
         allowNull: false,
       },
       sizes: {
@@ -30,25 +31,35 @@ module.exports = {
         allowNull: false,
       },
       sizes_available: {
-        type: Sequelize.ARRAY(Sequelize.INTEGER),
+        type: Sequelize.ARRAY(Sequelize.BOOLEAN),
         allowNull: false,
+      },
+      price: {
+        type: Sequelize.STRING,
+        allowNull: false
       },
       photo: {
         type: Sequelize.STRING,
         allowNull: false,
-      },
-      tags: {
-        type: Sequelize.ARRAY(Sequelize.STRING),
-        allowNull: true,
       },
       rating: {
         type: Sequelize.INTEGER,
         allowNull: true,
         defaultValue: 0,
       },
-      category: {
-        type: Sequelize.ARRAY(Sequelize.ENUM(categories)),
+      categories: {
+        type: Sequelize.ARRAY(Sequelize.STRING),
         allowNull: false,
+      },
+      stock: {
+        type: Sequelize.INTEGER,
+        allowNull: true,
+        defaultValue: 0
+      },
+      priority: {
+        type: Sequelize.INTEGER,
+        allowNull: false,
+        defaultValue: 0
       },
       store_id: {
         type: Sequelize.INTEGER,

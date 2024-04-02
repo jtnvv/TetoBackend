@@ -3,9 +3,9 @@ export const role = {
         'test'
     ],
     user: [
-        'test'
+        'user'
     ],
     brand: [
-        'test'
+        'store_item'
     ]
 };

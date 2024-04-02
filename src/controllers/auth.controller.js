@@ -125,7 +125,8 @@ export const changePassword = async (req, res) => {
     const mail = req.body.email;
     const pass = req.body.pass;
     try {
-        await User.update({ password: pass }, {
+        const hashedPassword = await bcrypt.hash(pass, 10);
+        await User.update({ password: hashedPassword }, {
             where: {
                 email: mail,
             },
@@ -144,7 +145,10 @@ export const sendEmail = async (req, res) => {
     try {
         return new Promise((resolve, reject) => {
             var transporter = nodemailer.createTransport({
-                service: "hotmail",
+                service: "gmail",
+                host: "smtp.gmail.com",
+                port: 465,
+                secure: true,
                 auth: {
                     user: server_mail,
                     pass: server_mail_pass,
@@ -160,10 +164,15 @@ export const sendEmail = async (req, res) => {
 
             transporter.sendMail(mail_configs, function (error, info) {
                 if (error) {
-                    return reject({ message: `An error has occured` });
+                    return reject({ message: error });
                 }
                 return resolve({ message: "Email sent succesfuly" });
             });
+            return res.status(200).json({
+                message: "Correo enviado con exito",
+            })
+        }).catch((err) => {
+            console.log(err)
         });
 
     } catch (err) {

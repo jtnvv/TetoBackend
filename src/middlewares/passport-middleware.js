@@ -18,18 +18,18 @@ const opts = {
 };
 
 passport.use(
-    new Strategy(opts, async ({ id }, done) => {
+    new Strategy(opts, async ({ id, email }, done) => {
         try {
             let res = await User.findOne({
                 where: {
-                    id: id,
+                    email: email,
                 },
             });
 
             if (!res) {
                 res = await Store.findOne({
                     where: {
-                        id: id,
+                        email: email,
                     },
                 });
             }

@@ -9,6 +9,7 @@ export const userAuth = ({ ability }) => (req, res, next) => {
         if (!user) {
             return res.status(403).json({ message: "No existe el usuario" })
         } else {
+            console.log(user.role);
             if (!role[user.role].includes(ability)) {
                 return res.status(403).json({ message: "No tienes permisos para acceder a este sitio" })
             }

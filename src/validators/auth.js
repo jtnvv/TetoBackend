@@ -36,6 +36,7 @@ const loginFieldCheck = check('email').custom(async function (value, { req }) {
   }
 
   req.user = user;
+  req.role = user.role
 
 });
 

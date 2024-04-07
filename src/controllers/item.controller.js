@@ -1,6 +1,6 @@
 import Item from "../database/models/Item.js";
 import Store from "../database/models/Store.js";
-import { categories } from "../config/teto.js";
+import { categories, colors, sizes } from "../config/teto.js";
 import { Op } from 'sequelize';
 
 export const getItem = async (req, res) => {
@@ -30,6 +30,7 @@ export const createItem = async (req, res) => {
       categories: request.categories,
       stock: request.stock,
       store_id: store.id,
+      priority: request.priority ? request.priority : 0
     },
       {
         include: Store,
@@ -57,6 +58,14 @@ export const getItemsByStore = async (req, res) => {
 
 export const getCategories = async (req, res) => {
   return await res.status(200).json({ categories: categories });
+}
+
+export const getColors = async (req, res) => {
+  return await res.status(200).json({ colors: colors });
+}
+
+export const getSizes = async (req, res) => {
+  return await res.status(200).json({ sizes: sizes });
 }
 
 export const getItemsByCategory = async (req, res) => {

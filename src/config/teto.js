@@ -23,6 +23,8 @@ export const node = {
 };
 
 export const categories = process.env.TETO_CATEGORIES;
+export const colors = process.env.TETO_COLORS;
+export const sizes = process.env.TETO_SIZES;
 export const server_mail = process.env.SERVER_MAIL;
 export const server_mail_pass = process.env.SERVER_MAIL_PASS;
 

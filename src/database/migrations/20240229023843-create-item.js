@@ -22,16 +22,8 @@ module.exports = {
         type: Sequelize.ARRAY(Sequelize.STRING),
         allowNull: false,
       },
-      colors_available: {
-        type: Sequelize.ARRAY(Sequelize.BOOLEAN),
-        allowNull: false,
-      },
       sizes: {
         type: Sequelize.ARRAY(Sequelize.STRING),
-        allowNull: false,
-      },
-      sizes_available: {
-        type: Sequelize.ARRAY(Sequelize.BOOLEAN),
         allowNull: false,
       },
       price: {

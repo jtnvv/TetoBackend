@@ -71,7 +71,7 @@ export const registerBrand = async function (req, res) {
             password: hashedPassword,
             phone_number: request.phone_number,
             description: request.description.toLowerCase(),
-            logo: "logo.jpg", //implementar despues
+            logo: request.logo,
         });
         return res.status(201).json({
             message: "Registro exitoso"
@@ -90,11 +90,12 @@ export const login = async (req, res) => {
             id: req.user.id,
             email: req.user.email
         }
+
         const token = await sign(payload, server.secret);
 
         return res.status(200).cookie('token', token, { httpOnly: true }).json({
-            success: true,
             message: 'Inicio de sesión exitoso',
+            role: req.role,
         })
     } catch (err) {
         console.error(err.message)
@@ -109,8 +110,7 @@ export const logout = async (req, res) => {
 
     try {
         return res.status(200).clearCookie('token', { httpOnly: true }).json({
-            success: true,
-            message: 'logout exitoso'
+            message: 'Cerraste sesión correctamente'
         })
     } catch (err) {
         console.error(err.message)

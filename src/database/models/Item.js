@@ -8,9 +8,7 @@ Item.init(
   {
     name: DataTypes.STRING,
     colors: DataTypes.ARRAY(DataTypes.STRING),
-    colors_available: DataTypes.ARRAY(DataTypes.BOOLEAN),
     sizes: DataTypes.ARRAY(DataTypes.STRING),
-    sizes_available: DataTypes.ARRAY(DataTypes.BOOLEAN),
     price: DataTypes.STRING,
     photo: DataTypes.STRING,
     rating: DataTypes.INTEGER,

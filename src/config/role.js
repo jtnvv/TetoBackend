@@ -3,9 +3,15 @@ export const role = {
         'test'
     ],
     user: [
-        'user'
+        'user',
+        'user_information',
+        'update_user_information'
     ],
     brand: [
-        'store_item'
+        'store_item',
+        'brand_information',
+        'update_brand_information'
+
+
     ]
 };

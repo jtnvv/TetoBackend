@@ -12,7 +12,8 @@ export const role = {
         'store_item',
         'brand_information',
         'update_brand_information',
-        "delete_item"
+        'delete_item',
+        'fetch_brand_orders',
 
 
     ]

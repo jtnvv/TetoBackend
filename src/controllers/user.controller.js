@@ -1,4 +1,6 @@
-import User from "../database/models/User";
+import User from "../database/models/User.js";
+import bcrypt from 'bcrypt';
+import Store from '../database/models/Store.js';
 
 export const createUser = async (req, res) => {
   try {
@@ -32,3 +34,53 @@ export const updatePass = async (req, res) => {
     await res.status(500).json({ message: error.message });
   }
 };
+
+export const getUserProfile = async (req, res) => {
+  
+  try {
+    const user = req.user
+    const information = await User.findAll({
+      where: {
+        id: user.id,
+      },
+    });
+    
+    return await res.status(200).json(information);
+  } catch (error) {
+    return await res.status(500).json({ message: error.message });
+  }
+}
+
+export const updateUserInformation = async(req,res) => {
+
+  try {
+    const user = req.user
+
+    let updateData = req.body;
+
+    if (await Store.findOne({ where: { email: req.body.email } })){
+      
+      return res.status(409).json({
+          message: "El correo ya se encuentra registrado",
+      })
+  }
+
+    // Si se envió la contraseña, la hasheamos
+    if ('password' in updateData) {
+      const hashedPassword = await bcrypt.hash(updateData.password, 10);
+      updateData.password = hashedPassword;
+    }
+
+
+    const update =   await User.update(updateData, {
+        where: {
+            id: user.id
+        }
+    });
+
+    return await res.status(200).json(update);
+
+  } catch (error){
+    return await res.status(500).json({ message: error.message });
+  }
+}

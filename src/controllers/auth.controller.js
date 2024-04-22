@@ -25,6 +25,7 @@ export const register = async function (req, res) {
     try {
         const email = req.body.email;
         const password = req.body.password;
+        const name = req.body.name;
         const hashedPassword = await bcrypt.hash(password, 10);
 
         if (await Store.findOne({ where: { email: email } })){
@@ -34,6 +35,7 @@ export const register = async function (req, res) {
         }
 
         await User.create({
+            name:name,
             email: email,
             password: hashedPassword,
         });
@@ -44,7 +46,7 @@ export const register = async function (req, res) {
             message: "registro exitoso",
         })
     } catch (err) {
-        console.error(err.message)
+    
         return res.status(500).json({
             error: err.message,
         })
@@ -69,7 +71,7 @@ export const registerBrand = async function (req, res) {
             city: request.address,
             email: request.email,
             password: hashedPassword,
-            phone_number: request.phone_number,
+            phone_number: request.phone,
             description: request.description.toLowerCase(),
             logo: request.logo,
         });

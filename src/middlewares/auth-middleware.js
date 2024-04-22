@@ -3,6 +3,7 @@ import { role } from "../config/role.js";
 
 export const userAuth = ({ ability }) => (req, res, next) => {
     passport.authenticate('jwt', async (err, user) => {
+    
         if (err) {
             return next(err);
         }

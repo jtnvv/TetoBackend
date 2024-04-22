@@ -6,6 +6,8 @@ import passport from 'passport';
 import itemRoutes from './routes/item.routes.js';
 import storeRoutes from "./routes/store.routes.js";
 import authRoutes from './routes/auth.routes.js';
+import userRoutes from './routes/user.routes.js';
+import orderRoutes from './routes/order.routes.js';
 
 const app = express();
 
@@ -19,6 +21,8 @@ app.use(passport.initialize())
 app.use(storeRoutes);
 app.use(itemRoutes);
 app.use(authRoutes);
+app.use(userRoutes);
+app.use(orderRoutes)
 
 export default app;
 

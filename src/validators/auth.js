@@ -12,11 +12,13 @@ const email = check('email').isEmail().withMessage('El correo ingresado no es va
 
 // existe el email
 const emailExists = check('email').custom(async (value) => {
+  
   const { rowCounts } = await sequelize.query("SELECT * FROM users WHERE email=?", {
     replacements: [value],
   });
-
+  
   if (rowCounts) {
+    
     throw new Error("Ya hay una cuenta registrada con ese correo");
   }
 });
@@ -42,4 +44,5 @@ const loginFieldCheck = check('email').custom(async function (value, { req }) {
 
 export const registerValidation = [email, password, emailExists];
 export const loginValidation = [loginFieldCheck];
+
 

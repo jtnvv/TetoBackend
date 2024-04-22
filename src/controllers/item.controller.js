@@ -83,3 +83,38 @@ export const getItemsByCategory = async (req, res) => {
     return await res.status(500).json({ message: error.message });
   }
 }
+
+export const getItemsById = async (req, res) => {
+  try {
+    const itemId = req.params.product_id;
+    const item = await Item.findOne({
+      where: {
+        id: itemId,
+      },
+    });
+    const owner = await item.getStore();
+
+    return await res.status(200).json({
+      item: item,
+      owner: {
+        id: owner.id,
+        name: owner.name
+      }
+    });
+  } catch (error) {
+    return await res.status(500).json({ message: error.message });
+  }
+}
+
+export const getItemsByPriority = async (req, res) => {
+  try {
+    const items = await Item.findAll({
+      order: [
+        ['priority', 'DESC'],
+      ],
+    });
+    return await res.status(200).json(items);
+  } catch (error) {
+    return await res.status(500).json({ message: error.message });
+  }
+}

@@ -2,6 +2,7 @@ import { Model, DataTypes } from "sequelize";
 import sequelize from "./index.js";
 import Item from "./Item.js";
 import User from "./User.js";
+import Order from "./Order.js";
 
 const Store = class extends Model {
   static associate(models) {
@@ -16,6 +17,17 @@ const Store = class extends Model {
     });
     Item.belongsToMany(User, {
       through: "Favorites",
+    });
+
+    Order.belongsTo(Store, {
+      foreignKey: {
+        name: 'store_id',
+        allowNull: false,
+      },
+    });
+    Store.hasMany(Order, {
+      foreignKey: "store_id",
+      sourceKey: "id",
     });
   }
 };

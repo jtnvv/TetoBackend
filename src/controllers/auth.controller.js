@@ -111,7 +111,7 @@ export const login = async (req, res) => {
 export const logout = async (req, res) => {
 
     try {
-        return res.status(200).clearCookie('token', { httpOnly: true }).json({
+        return res.status(200).clearCookie('token', { httpOnly: true, sameSite: 'none', secure: true }).json({
             message: 'Cerraste sesión correctamente'
         })
     } catch (err) {

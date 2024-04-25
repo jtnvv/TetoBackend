@@ -95,7 +95,7 @@ export const login = async (req, res) => {
 
         const token = await sign(payload, server.secret);
 
-        return res.status(200).cookie('token', token, { httpOnly: true }).json({
+        return res.status(200).cookie('token', token, { httpOnly: true, sameSite: 'none', secure: true }).json({
             message: 'Inicio de sesión exitoso',
             role: req.role,
         })

@@ -4,34 +4,27 @@ module.exports = {
   async up(queryInterface, Sequelize) {
     const categories = await import("../../config/teto.js").then(
       (module) => module.categories
-      );
+    );
     await queryInterface.createTable("items", {
       id: {
         allowNull: false,
         autoIncrement: true,
         primaryKey: true,
+        unique: true,
         type: Sequelize.INTEGER,
       },
       name: {
         type: Sequelize.STRING,
         allowNull: false,
-        primaryKey: true,
+        primaryKey: false,
         unique: true
       },
       colors: {
         type: Sequelize.ARRAY(Sequelize.STRING),
         allowNull: false,
       },
-      colors_available: {
-        type: Sequelize.ARRAY(Sequelize.BOOLEAN),
-        allowNull: false,
-      },
       sizes: {
         type: Sequelize.ARRAY(Sequelize.STRING),
-        allowNull: false,
-      },
-      sizes_available: {
-        type: Sequelize.ARRAY(Sequelize.BOOLEAN),
         allowNull: false,
       },
       price: {
@@ -82,6 +75,6 @@ module.exports = {
     });
   },
   async down(queryInterface, Sequelize) {
-    await queryInterface.dropTable('items');
+    await queryInterface.dropTable('items',{cascade: true});
   }
 };

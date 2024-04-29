@@ -18,18 +18,18 @@ const opts = {
 };
 
 passport.use(
-    new Strategy(opts, async ({ id }, done) => {
+    new Strategy(opts, async ({ email }, done) => {
         try {
             let res = await User.findOne({
                 where: {
-                    id: id,
+                    email: email,
                 },
             });
-            
+
             if (!res) {
                 res = await Store.findOne({
                     where: {
-                        id: id,
+                        email: email,
                     },
                 });
             }
@@ -37,7 +37,7 @@ passport.use(
             if (!res) {
                 throw new Error("401 no Autorizado");
             }
-            
+
             let user = res;
             return await done(null, user);
         } catch (err) {

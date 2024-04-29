@@ -1,16 +1,34 @@
 import { Model, DataTypes } from "sequelize";
 import sequelize from "./index.js";
+import Order from "./Order.js";
 
 const Item = class extends Model {
+  static associate(models) {
+    // En tu modelo Order
+    Order.belongsToMany(Item, {
+      through: 'order_detail',
+      foreignKey: 'order_id',
+      otherKey: 'item_id'
+    });
+
+    // En tu modelo Item
+    Item.belongsToMany(Order, {
+      through: 'order_detail',
+      foreignKey: 'item_id',
+      otherKey: 'order_id'
+    });
+
+
+      }
+
 };
+
 
 Item.init(
   {
     name: DataTypes.STRING,
     colors: DataTypes.ARRAY(DataTypes.STRING),
-    colors_available: DataTypes.ARRAY(DataTypes.BOOLEAN),
     sizes: DataTypes.ARRAY(DataTypes.STRING),
-    sizes_available: DataTypes.ARRAY(DataTypes.BOOLEAN),
     price: DataTypes.STRING,
     photo: DataTypes.STRING,
     rating: DataTypes.INTEGER,
@@ -23,5 +41,5 @@ Item.init(
     modelName: "item",
   }
 );
-
+Item.associate();
 export default Item;

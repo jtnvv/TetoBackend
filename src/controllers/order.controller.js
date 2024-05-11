@@ -19,10 +19,12 @@ export const createPaymentLink = async (req, res) => {
       color: products[0].color,
       size: products[0].size,
       user_id: req.user.id,
-      store_id: products[0].store_id
+      store_id: products[0].store_id,
+      item_id: products[0].id,
     },{
       include: User,
       include: Store,
+      include: Item,
     });
 
     request = [...request, {
@@ -44,10 +46,12 @@ export const createPaymentLink = async (req, res) => {
         size: item.size,
         user_id: req.user.id,
         store_id: item.store_id,
+        item_id: item.id,
         parent_order_id: parentOrder.id
       }, {
         include: User,
         include: Store,
+        include: Item,
         include: Order,
       });
 
@@ -59,8 +63,10 @@ export const createPaymentLink = async (req, res) => {
       }];
     });
 
-
+    // Create the payment link and save it into parent order
     const preference = await client.createPreference(request, parentOrder.id);
+    parentOrder.payment_link = preference.init_point;
+    parentOrder.save();
 
     return await res.status(200).json({ payment_link: preference.init_point });
   } catch (error) {

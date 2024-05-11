@@ -6,23 +6,24 @@ import Store from "./Store.js";
 const Item = class extends Model {
   static associate(models) {
     // En tu modelo Order
-    Order.belongsToMany(Item, {
-      through: 'order_detail',
-      foreignKey: 'order_id',
-      otherKey: 'item_id'
-    });
     Item.belongsToMany(Order, {
       through: 'order_detail',
       foreignKey: 'item_id',
       otherKey: 'order_id'
     });
+    Item.belongsTo(Store, {
+      foreignKey: {
+        name: 'store_id',
+      },
+    });
     Store.hasMany(Item, {
       foreignKey: "store_id",
       sourceKey: "id",
     });
-    Item.belongsTo(Store, {
+    Order.belongsTo(Item, {
       foreignKey: {
-        name: 'store_id',
+        name: 'item_id',
+        allowNull: false,
       },
     });
   }

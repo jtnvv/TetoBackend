@@ -56,6 +56,16 @@ module.exports = {
         onDelete: "CASCADE",
         primaryKey: false,
       },
+      item_id: {
+        type: Sequelize.INTEGER,
+        allowNull: false,
+        references: {
+          model: "items",
+          key: "id",
+        },
+        onDelete: "CASCADE",
+        primaryKey: false,
+      },
       parent_order_id: {
         type: Sequelize.INTEGER,
         allowNull: true,
@@ -65,6 +75,9 @@ module.exports = {
         },
         onDelete: "CASCADE",
         primaryKey: false,
+      },
+      payment_link: {
+        type: Sequelize.STRING,
       },
       createdAt: {
         allowNull: false,

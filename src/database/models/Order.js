@@ -1,30 +1,26 @@
 import { Model, DataTypes } from "sequelize";
 import sequelize from "./index.js";
-import User from "./User.js";
 import Store from "./Store.js";
-import Item from "./Item.js";
 
 
 const Order = class extends Model {
   static associate(models) {
-
-    
-    Order.belongsTo(User, {
+    Order.belongsTo(Store, {
       foreignKey: {
-        name: "user_id",
+        name: 'store_id',
         allowNull: false,
       },
     });
-      
-    User.hasMany(Order, {
-      foreignKey: "user_id",
+    Order.belongsTo(Order, {
+      foreignKey: {
+        name: 'parent_order_id',
+        allowNull: true,
+      },
+    });
+    Store.hasMany(Order, {
+      foreignKey: "store_id",
       sourceKey: "id",
     });
-
-    
-
-    
-
   }
 };
 
@@ -35,6 +31,8 @@ Order.init(
     received_at: DataTypes.DATE,
     delivery_addresss: DataTypes.STRING,
     rating: DataTypes.INTEGER,
+    color: DataTypes.STRING,
+    size: DataTypes.STRING,
   },
   {
     sequelize,

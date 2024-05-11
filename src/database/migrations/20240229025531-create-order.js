@@ -19,6 +19,8 @@ module.exports = {
       },
       received_at: {
         type: Sequelize.DATE,
+        allowNull: true,
+        default: null,
       },
       delivery_addresss: {
         type: Sequelize.STRING,
@@ -26,13 +28,13 @@ module.exports = {
       rating: {
         type: Sequelize.INTEGER,
       },
-      createdAt: {
+      color: {
+        type: Sequelize.STRING,
         allowNull: false,
-        type: Sequelize.DATE,
       },
-      updatedAt: {
+      size: {
+        type: Sequelize.STRING,
         allowNull: false,
-        type: Sequelize.DATE,
       },
       user_id: {
         type: Sequelize.INTEGER,
@@ -54,7 +56,24 @@ module.exports = {
         onDelete: "CASCADE",
         primaryKey: false,
       },
-      
+      parent_order_id: {
+        type: Sequelize.INTEGER,
+        allowNull: true,
+        references: {
+          model: "orders",
+          key: "id",
+        },
+        onDelete: "CASCADE",
+        primaryKey: false,
+      },
+      createdAt: {
+        allowNull: false,
+        type: Sequelize.DATE,
+      },
+      updatedAt: {
+        allowNull: false,
+        type: Sequelize.DATE,
+      },
     });
   },
   async down(queryInterface, Sequelize) {

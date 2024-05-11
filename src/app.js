@@ -8,6 +8,7 @@ import storeRoutes from "./routes/store.routes.js";
 import authRoutes from './routes/auth.routes.js';
 import userRoutes from './routes/user.routes.js';
 import orderRoutes from './routes/order.routes.js';
+import webhookPagoRoutes from './routes/webhook.routes.js';
 
 const app = express();
 
@@ -22,7 +23,8 @@ app.use(storeRoutes);
 app.use(itemRoutes);
 app.use(authRoutes);
 app.use(userRoutes);
-app.use(orderRoutes)
+app.use(orderRoutes);
+app.use(webhookPagoRoutes);
 
 export default app;
 

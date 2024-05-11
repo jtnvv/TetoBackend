@@ -4,24 +4,32 @@
 module.exports = {
   async up(queryInterface, Sequelize) {
     await queryInterface.createTable("favorites", {
-      // item_id: {
-      //   type: Sequelize.INTEGER,
-      //   allowNull: false,
-      //   references: {
-      //     model: "items",
-      //     key: "id",
-      //   },
-      //   onDelete: "CASCADE",
-      // },
-      // user_id: {
-      //   type: Sequelize.INTEGER,
-      //   allowNull: false,
-      //   references: {
-      //     model: "users",
-      //     key: "id",
-      //   },
-      //   onDelete: "CASCADE",
-      // },
+      item_id: {
+        type: Sequelize.INTEGER,
+        allowNull: false,
+        references: {
+          model: "items",
+          key: "id",
+        },
+        onDelete: "CASCADE",
+      },
+      user_id: {
+        type: Sequelize.INTEGER,
+        allowNull: false,
+        references: {
+          model: "users",
+          key: "id",
+        },
+        onDelete: "CASCADE",
+      },
+      createdAt: {
+        allowNull: false,
+        type: Sequelize.DATE,
+      },
+      updatedAt: {
+        allowNull: false,
+        type: Sequelize.DATE,
+      },
     });
   },
 

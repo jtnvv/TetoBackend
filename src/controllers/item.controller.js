@@ -118,3 +118,57 @@ export const getItemsByPriority = async (req, res) => {
     return await res.status(500).json({ message: error.message });
   }
 }
+
+export const addToFavorites = async (req, res) => {
+  try {
+    const item = await req.user.getItems({
+      where: {
+        id: req.body.item_id,
+      }
+    });
+
+    if (Object.keys(item).length === 0) {
+      await req.user.addItem(
+        await Item.findOne({
+          where: {
+            id: req.body.item_id,
+          }
+        })
+      );
+
+      return await res.status(201).json({
+        message: "Articulo agregado a favoritos"
+      });
+    } 
+
+    await req.user.removeItem(item);
+    
+    return await res.status(200).json({
+      message : "Articulo removido de favoritos" 
+    });
+  } catch (error) {
+    return await res.status(500).json({ message: error.message });
+  }
+}
+
+export const isFavorite = async (req, res) => {
+  try {
+    const item = await req.user.getItems({
+      where: {
+        id: req.params.item_id,
+      }
+    });
+
+    if (Object.keys(item).length === 0) {
+      return await res.status(200).json({
+        message: false
+      });
+    }
+
+    return await res.status(200).json({
+      message: true
+    });
+  } catch (error) {
+    return await res.status(500).json({ message: error.message});
+  }
+}

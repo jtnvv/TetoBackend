@@ -9,8 +9,6 @@ module.exports = {
         primaryKey: true,
         type: Sequelize.INTEGER,
       },
-      
-      
       createdAt: {
         allowNull: false,
         type: Sequelize.DATE,
@@ -19,7 +17,6 @@ module.exports = {
         allowNull: false,
         type: Sequelize.DATE,
       },
-      
       order_id: {
         type: Sequelize.INTEGER,
         allowNull: false,
@@ -33,14 +30,20 @@ module.exports = {
       item_id: {
         type: Sequelize.INTEGER,
         allowNull: false,
-        references: {
-          model: "items",
-          key: "id",
-        },
         onDelete: "CASCADE",
         primaryKey: true,
+      },
+      item_id: {
+        type: Sequelize.STRING,
+        allowNull: false,
+        onDelete: "CASCADE",
+        primaryKey: true,
+      },
+      item_id: {
+        type: Sequelize.STRING,
+        allowNull: false,
+        onDelete: "CASCADE",
       }
-      
     });
   },
   async down(queryInterface, Sequelize) {

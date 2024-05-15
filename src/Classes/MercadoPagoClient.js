@@ -32,11 +32,9 @@ class MercadoPagoClient {
     confirmPayment(payment_id) {
         const payment = new Payment(this.client);
 
-        payment.get({
+        return payment.get({
             id: payment_id
-        })
-            .then(res => console.log(res))
-            .catch(err => console.log(err));
+        });
     }
 }
 

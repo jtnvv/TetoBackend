@@ -79,38 +79,39 @@ export const createPaymentLink = async (req, res) => {
 
 export const fetchUserOrders = async (req, res) => {
 
-    try {
-      const userToken = req.user
-      const user = await User.findByPk(userToken.id);
-
-      // Obtener todas las órdenes de ese usuario
-      const orders = await user.getOrders({
-        include: [
-          {
-            model: Item,
-            through: { attributes: [] } // Esto excluye los atributos de la tabla de unión
-          }
-        ]
-      });
-
-      return await res.status(200).json(orders);
-    } catch (error) {
-      return await res.status(500).json({ message: error.message });
-    }
-};
-
-export const fetchBrandOrders = async (req, res) => {
-
   try {
-    const userToken = req.user
-    const store = await Store.findByPk(userToken.id);
+    const userId = req.user.id; //  ID de la tienda está en req.user.id
 
-    // Obtener todas las órdenes de ese usuario
-    const orders = await store.getOrders({
+    // Buscar en la tabla de órdenes por la ID de la tienda
+    const orders = await Order.findAll({
+      where: { user_id: userId },
       include: [
         {
           model: Item,
-          through: { attributes: [] } // Esto excluye los atributos de la tabla de unión
+          as: 'item', // Esto debe coincidir con cómo has definido la asociación en tus modelos
+          attributes: ['name', 'colors', 'sizes', 'price', 'photo', 'rating', 'categories', 'stock', 'priority'] // Incluye aquí los atributos que quieras devolver
+        }
+      ]
+    });
+
+    return await res.status(200).json(orders);
+  } catch (error) {
+    return await res.status(500).json({ message: error.message });
+  }
+};
+
+export const fetchBrandOrders = async (req, res) => {
+  try {
+    const storeId = req.user.id; //  ID de la tienda está en req.user.id
+
+    // Buscar en la tabla de órdenes por la ID de la tienda
+    const orders = await Order.findAll({
+      where: { store_id: storeId },
+      include: [
+        {
+          model: Item,
+          as: 'item', // Esto debe coincidir con cómo has definido la asociación en tus modelos
+          attributes: ['name', 'colors', 'sizes', 'price', 'photo', 'rating', 'categories', 'stock', 'priority'] // Incluye aquí los atributos que quieras devolver
         }
       ]
     });

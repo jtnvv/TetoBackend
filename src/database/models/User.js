@@ -1,7 +1,31 @@
 import { Model, DataTypes } from "sequelize";
 import sequelize from './index.js'
+import Item from "./Item.js";
+import Order from "./Order.js";
 
 const User = class extends Model {
+  static associate(models) {
+    User.belongsToMany(Item, {
+      through: "favorites",
+      foreignKey: "user_id",
+      otherKey: "item_id",
+    });
+    Order.belongsTo(User, {
+      foreignKey: {
+        name: "user_id",
+        allowNull: false,
+      },
+    });
+    User.hasMany(Order, {
+      foreignKey: "user_id",
+      sourceKey: "id",
+    });
+    Item.belongsToMany(User, {
+      through: "favorites",
+      foreignKey: "item_id",
+      otherKey: "user_id",
+    });
+  }
 };
 
 User.init(
@@ -18,5 +42,7 @@ User.init(
     modelName: "user",
   }
 );
+
+User.associate();
 
 export default User;

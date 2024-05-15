@@ -36,6 +36,10 @@ export const server = {
   secret: process.env.SECRET_SALT,
 };
 
+export const mercadopago = {
+  access_token: process.env.MP_ACCESS_TOKEN,
+};
+
 export const emailTemplate = (codigoConfirmacion) => {
   return `<!DOCTYPE html>
       <html lang="en" >

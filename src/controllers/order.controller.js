@@ -89,7 +89,7 @@ export const fetchUserOrders = async (req, res) => {
         {
           model: Item,
           as: 'item', // Esto debe coincidir con cómo has definido la asociación en tus modelos
-          attributes: ['name', 'colors', 'sizes', 'price', 'photo', 'rating', 'categories', 'stock', 'priority'] // Incluye aquí los atributos que quieras devolver
+          attributes: ['id','name', 'colors', 'sizes', 'price', 'photo', 'rating', 'categories', 'stock', 'priority'] // Incluye aquí los atributos que quieras devolver
         }
       ]
     });
@@ -111,7 +111,7 @@ export const fetchBrandOrders = async (req, res) => {
         {
           model: Item,
           as: 'item', // Esto debe coincidir con cómo has definido la asociación en tus modelos
-          attributes: ['name', 'colors', 'sizes', 'price', 'photo', 'rating', 'categories', 'stock', 'priority'] // Incluye aquí los atributos que quieras devolver
+          attributes: ['id','name', 'colors', 'sizes', 'price', 'photo', 'rating', 'categories', 'stock', 'priority'] // Incluye aquí los atributos que quieras devolver
         }
       ]
     });

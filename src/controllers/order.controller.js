@@ -61,6 +61,21 @@ export const fetchBrandOrders = async (req, res) => {
   }
 }; 
 
+export const updateSend = async (req, res) => {
+  try {
+    const sid = req.body.id;
+
+    await User.update({ sent_status: TRUE }, {
+      where: {
+        id: sid,
+      },
+    });
+
+    await res.status(200).json({ message: "status Updated" });
+  } catch (error) {
+    await res.status(500).json({ message: error.message });
+  }
+};
 
 
 

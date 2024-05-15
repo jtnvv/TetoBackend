@@ -1,4 +1,4 @@
-import { Preference, MercadoPagoConfig } from "mercadopago";
+import { Preference, MercadoPagoConfig, Payment } from "mercadopago";
 import { mercadopago } from "../config/teto.js";
 
 class MercadoPagoClient {
@@ -29,20 +29,15 @@ class MercadoPagoClient {
         }
     }
 
-    // confirmPayment(request) {
-    //     const preference = new Preference(this.client);
+    confirmPayment(payment_id) {
+        const payment = new Payment(this.client);
 
-    //     return preference.create({
-    //         body: {
-    //             items: {
-    //                 title: request.title,
-    //                 unit_price: request.unit_price,
-    //                 quantity: request.quantity
-    //             },
-    //             external_reference: request.external_reference
-    //         }
-    //     });
-    // }
+        payment.get({
+            id: payment_id
+        })
+            .then(res => console.log(res))
+            .catch(err => console.log(err));
+    }
 }
 
 export default MercadoPagoClient;

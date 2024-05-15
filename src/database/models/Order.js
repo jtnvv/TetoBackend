@@ -33,7 +33,9 @@ Order.init(
     rating: DataTypes.INTEGER,
     color: DataTypes.STRING,
     size: DataTypes.STRING,
+    quantity: DataTypes.INTEGER,
     payment_link: DataTypes.STRING,
+    payment_id: DataTypes.STRING,
   },
   {
     sequelize,

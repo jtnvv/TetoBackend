@@ -18,6 +18,7 @@ export const createPaymentLink = async (req, res) => {
       rating: products[0].rating,
       color: products[0].color,
       size: products[0].size,
+      quantity: products[0].quantity,
       user_id: req.user.id,
       store_id: products[0].store_id,
       item_id: products[0].id,
@@ -28,7 +29,7 @@ export const createPaymentLink = async (req, res) => {
     });
 
     request = [...request, {
-      title: products[0].name,
+      title: products[0].name + ' ' + products[0].color + ' ' + products[0].size,
       unit_price: parseFloat(products[0].price.replace(/[^0-9.,-]/g, '')) * 1000,
       quantity: products[0].quantity,
       currency_id: "COP"
@@ -39,11 +40,19 @@ export const createPaymentLink = async (req, res) => {
 
     // Add child products to the parent order and to the request array
     products.forEach(async item => {
+      request = [...request, {
+        title: item.name + ' ' + item.color + ' ' + item.size,
+        unit_price: parseFloat(item.price.replace(/[^0-9.,-]/g, '')) * 1000,
+        quantity: item.quantity,
+        currency_id: "COP"
+      }];
+    
       await Order.create({
         delivery_addresss: address,
         rating: item.rating,
         color: item.color,
         size: item.size,
+        quantity: item.quantity,
         user_id: req.user.id,
         store_id: item.store_id,
         item_id: item.id,
@@ -54,13 +63,6 @@ export const createPaymentLink = async (req, res) => {
         include: Item,
         include: Order,
       });
-
-      request = [...request, {
-        title: item.name,
-        unit_price: parseFloat(item.price.replace(/[^0-9.,-]/g, '')) * 1000,
-        quantity: item.quantity,
-        currency_id: "COP"
-      }];
     });
 
     // Create the payment link and save it into parent order

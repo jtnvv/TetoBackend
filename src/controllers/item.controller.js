@@ -172,3 +172,13 @@ export const isFavorite = async (req, res) => {
     return await res.status(500).json({ message: error.message});
   }
 }
+
+export const getFavorites = async (req, res) => {
+  try {
+    return await res.status(200).json({
+      items: await req.user.getItems(),
+    });
+  } catch (error) {
+    return await res.status(500).json({ message: error.message });
+  }
+}

@@ -1,5 +1,5 @@
 import { Preference, MercadoPagoConfig, Payment } from "mercadopago";
-import { mercadopago } from "../config/teto.js";
+import { client, mercadopago } from "../config/teto.js";
 
 class MercadoPagoClient {
 
@@ -20,7 +20,11 @@ class MercadoPagoClient {
             return preference.create({
                 body: {
                     items: request,
-                    external_reference: external_reference
+                    external_reference: external_reference,
+                    auto_return: "approved",
+                    back_urls: {
+                        success: client.url + "/success",
+                    }
                 }
             });
         } catch (error) {

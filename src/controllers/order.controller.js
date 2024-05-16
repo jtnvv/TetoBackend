@@ -1,9 +1,10 @@
-
+import { Op } from 'sequelize';
 import Store from '../database/models/Store.js';
 import User from '../database/models/User.js';
 import Item from "../database/models/Item.js";
 import MercadoPagoClient from '../Classes/MercadoPagoClient.js';
 import Order from '../database/models/Order.js';
+import { body } from 'express-validator';
 
 export const createPaymentLink = async (req, res) => {
   try {
@@ -145,5 +146,29 @@ export const updateOrderRating = async (req, res) => {
   }
 };
 
+export const itemRating = async (req, res) => {
+  try {
+    const id = req.body.id;
+    // Buscar el item por ID
+    const item = await Item.findByPk(id);
+    const orders_by_item = await item.getOrders({
+      where: { rating: { [Op.gt]: 0 } }
+    })
 
+    const average = orders_by_item.reduce((acc, order) => {
+      return acc + order.rating;
+    }, 0) / orders_by_item.length;
+    // Si el item no existe, devolver un error
+    if (!item) {
+      return res.status(404).json({ message: 'Item not found' });
+    }
+
+    // Actualizar el rating del item
+    item.rating = average;
+    await item.save();
+    return res.status(200).json(item);
+  } catch (error) {
+    return res.status(500).json({ message: error.message });
+  }
+}
 

@@ -4,7 +4,6 @@ import User from '../database/models/User.js';
 import Item from "../database/models/Item.js";
 import MercadoPagoClient from '../Classes/MercadoPagoClient.js';
 import Order from '../database/models/Order.js';
-import { body } from 'express-validator';
 
 export const createPaymentLink = async (req, res) => {
   try {
@@ -47,7 +46,12 @@ export const createPaymentLink = async (req, res) => {
         quantity: item.quantity,
         currency_id: "COP"
       }];
+    });
 
+    // Create the payment link and save it into parent order
+    const preference = await client.createPreference(request, parentOrder.id);
+
+    products.forEach(async item => {
       await Order.create({
         delivery_addresss: address,
         rating: item.rating,
@@ -57,7 +61,8 @@ export const createPaymentLink = async (req, res) => {
         user_id: req.user.id,
         store_id: item.store_id,
         item_id: item.id,
-        parent_order_id: parentOrder.id
+        parent_order_id: parentOrder.id,
+        payment_link: preference.init_point
       }, {
         include: User,
         include: Store,
@@ -66,14 +71,11 @@ export const createPaymentLink = async (req, res) => {
       });
     });
 
-    // Create the payment link and save it into parent order
-    const preference = await client.createPreference(request, parentOrder.id);
     parentOrder.payment_link = preference.init_point;
     parentOrder.save();
 
     return await res.status(200).json({ payment_link: preference.init_point });
   } catch (error) {
-    console.log('ERROR', error.message);
     return await res.status(500).json({ message: error.message });
   }
 };
@@ -164,7 +166,7 @@ export const itemRating = async (req, res) => {
     }
 
     // Actualizar el rating del item
-    item.rating = average;
+    item.rating = parseInt(average);
     await item.save();
     return res.status(200).json(item);
   } catch (error) {

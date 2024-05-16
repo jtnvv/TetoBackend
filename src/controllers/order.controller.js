@@ -166,7 +166,7 @@ export const itemRating = async (req, res) => {
     }
 
     // Actualizar el rating del item
-    item.rating = average;
+    item.rating = parseInt(average);
     await item.save();
     return res.status(200).json(item);
   } catch (error) {

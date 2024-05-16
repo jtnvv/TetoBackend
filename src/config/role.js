@@ -13,6 +13,8 @@ export const role = {
         'update_brand_information',
         'delete_item',
         'fetch_brand_orders',
+        'update_rating_order',
+        'update_order_status',
     ],
     user: [
         'user',
@@ -30,5 +32,6 @@ export const role = {
         'update_brand_information',
         'delete_item',
         'fetch_brand_orders',
+        'update_order_status',
     ]
 };

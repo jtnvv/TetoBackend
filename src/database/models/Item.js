@@ -6,10 +6,16 @@ import Store from "./Store.js";
 const Item = class extends Model {
   static associate(models) {
     // En tu modelo Order
-    
+
     Item.belongsTo(Store, {
       foreignKey: {
         name: 'store_id',
+      },
+    });
+    Item.hasMany(Order, {
+      foreignKey: {
+        name: 'item_id',
+        sourceKey: 'id',
       },
     });
     Store.hasMany(Item, {

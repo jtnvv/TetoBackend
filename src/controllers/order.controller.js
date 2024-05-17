@@ -125,6 +125,34 @@ export const fetchBrandOrders = async (req, res) => {
   }
 };
 
+export const updateSend = async (req, res) => {
+  try {
+    await Order.update({ sent_status: true }, {
+      where: {
+        id: req.body.id,
+      },
+    });
+
+    await res.status(200).json({ message: "status Updated" });
+  } catch (error) {
+    await res.status(500).json({ message: error.message });
+  }
+};
+
+export const updateReceived = async (req, res) => {
+  try {
+    await Order.update({ received_status: true }, {
+      where: {
+        id: req.body.id,
+      },
+    });
+
+    await res.status(200).json({ message: "Status Updated" });
+  } catch (error) {
+    await res.status(500).json({ message: error.message });
+  }
+};
+
 export const updateOrderRating = async (req, res) => {
   try {
     const id = req.body.id; // ID de la orden

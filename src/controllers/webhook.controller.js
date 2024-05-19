@@ -17,12 +17,16 @@ export const getMercadoPagoPayment = async (req, res) => {
                 }
             });
 
-            orders.forEach(order => {
+            orders.forEach(async (order) => {
                 order.sent_status = false;
                 order.received_status = false;
                 order.payment_id = req.body.data.id;
                 order.payment_link = null;
                 order.save();
+
+                const item = order.getItem();
+                item.stock = item.stock - 1;
+                item.save();
             });
         }
 

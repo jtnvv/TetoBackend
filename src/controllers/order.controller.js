@@ -133,7 +133,7 @@ export const updateSend = async (req, res) => {
       },
     });
 
-    await res.status(200).json({ message: "status Updated" });
+    await res.status(200).json({ message: "Status Updated" });
   } catch (error) {
     await res.status(500).json({ message: error.message });
   }

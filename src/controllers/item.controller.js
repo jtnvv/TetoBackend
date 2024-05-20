@@ -3,6 +3,10 @@ import Store from "../database/models/Store.js";
 import { categories, colors, sizes } from "../config/teto.js";
 import { Op } from 'sequelize';
 
+function containsOnlyDigits(str) {
+  return /^\d+$/.test(str);
+}
+
 export const getItem = async (req, res) => {
   await res.send("Item 1");
 };
@@ -11,10 +15,27 @@ export const createItem = async (req, res) => {
   try {
     const request = req.body;
     const store = req.user;
+
     request.categories.every((category) => {
       if (!categories.includes(category)) {
         return res.status(422).json({
           message: category + " no es una categoria valida"
+        });
+      }
+    });
+
+    request.colors.every((color) => {
+      if (!colors.includes(color)) {
+        return res.status(422).json({
+          message: color + " no es un color valido"
+        });
+      }
+    });
+
+    request.sizes.every((size) => {
+      if (!sizes.includes(size)) {
+        return res.status(422).json({
+          message: size + " no es una talla valida"
         });
       }
     });
@@ -179,6 +200,77 @@ export const getFavorites = async (req, res) => {
       items: await req.user.getItems(),
     });
   } catch (error) {
+    return await res.status(500).json({ message: error.message });
+  }
+}
+
+export const updateItem = async (req, res) => {
+  try {
+    const item = await req.user.getItems({
+      where: {
+        id: req.body.item_id
+      }
+    });
+
+    item[0].price = req.body.price ? req.body.price : item[0].price;
+    item[0].stock = req.body.stock;
+    item[0].categories = req.body.categories ? req.body.categories.categories : item[0].categories;
+    item[0].sizes = req.body.sizes ? req.body.sizes.sizes : item[0].sizes;
+    item[0].colors = req.body.colors ? req.body.colors.colors : item[0].colors;
+
+    if (!containsOnlyDigits(item[0].price)) {
+      return await res.status(500).json({ message: "Ingresa un formato de precio valido" });
+    }
+
+    item[0].categories.every((category) => {
+      if (!categories.includes(category)) {
+        return res.status(422).json({
+          message: category + " no es una categoria valida"
+        });
+      }
+    });
+
+    item[0].colors.every((color) => {
+      if (!colors.includes(color)) {
+        return res.status(422).json({
+          message: color + " no es un color valido"
+        });
+      }
+    });
+
+    item[0].sizes.every((size) => {
+      if (!sizes.includes(size)) {
+        return res.status(422).json({
+          message: size + " no es una talla valida"
+        });
+      }
+    });
+
+    await item[0].save();
+
+    return await res.status(200).json({
+      message: 'Producto actualizado correctamente',
+    });
+  } catch (error) {
+    return await res.status(500).json({ message: error.message });
+  }
+}
+
+export const isOwner = async (req, res) => {
+  try {
+    const item = await req.user.getItems({
+      where: {
+        id: req.params.item_id,
+      }
+    });
+
+    const isOwner = Object.keys(item).length === 0 ? false : true;
+
+    return await res.status(200).json({
+      message: isOwner,
+    });
+  } catch (error) {
+    console.log(error);
     return await res.status(500).json({ message: error.message });
   }
 }

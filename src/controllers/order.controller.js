@@ -13,7 +13,16 @@ export const createPaymentLink = async (req, res) => {
     const client = new MercadoPagoClient();
     const products = req.body.products;
     const address = req.body.address;
+    let error = "";
     let request = [];
+
+    if (products[0].stock <= products[0].quantity) {
+      return await res.status(500).json({ message: `${products[0].name}: No hay suficientes productos de este item para completar la order` });
+    }
+
+    await products.filter(product => product.id === products[0].id).forEach(product => {
+      product.stock = product.stock - products[0].quantity;
+    });
 
     // Create parent_order
     const parentOrder = await Order.create({
@@ -40,9 +49,18 @@ export const createPaymentLink = async (req, res) => {
 
     // Remove parent order from products collection
     products.splice(0, 1);
-
+    
     // Add child products to the parent order and to the request array
-    products.forEach(async item => {
+    await products.every(async item => {
+      if (item.stock + 1 <= item.quantity) {
+        error = `${products[0].name}: No hay suficientes productos de este item para completar la order 2`;
+        return false;
+      }
+      
+      await products.filter(product => product.id === item.id).forEach(product => {
+        product.stock = product.stock - item.quantity;
+      });
+      
       request = [...request, {
         title: item.name + ' ' + item.color + ' ' + item.size,
         unit_price: parseFloat(item.price.replace(/[^0-9.,-]/g, '')) * 1000,
@@ -51,6 +69,10 @@ export const createPaymentLink = async (req, res) => {
       }];
     });
 
+    if (error) {
+      return await res.status(500).json({ message: error });
+    }
+    
     // Create the payment link and save it into parent order
     const preference = await client.createPreference(request, parentOrder.id);
 
@@ -130,6 +152,34 @@ export const fetchBrandOrders = async (req, res) => {
     return await res.status(200).json(orders);
   } catch (error) {
     return await res.status(500).json({ message: error.message });
+  }
+};
+
+export const updateSend = async (req, res) => {
+  try {
+    await Order.update({ sent_status: true }, {
+      where: {
+        id: req.body.id,
+      },
+    });
+
+    await res.status(200).json({ message: "Status Updated" });
+  } catch (error) {
+    await res.status(500).json({ message: error.message });
+  }
+};
+
+export const updateReceived = async (req, res) => {
+  try {
+    await Order.update({ received_status: true }, {
+      where: {
+        id: req.body.id,
+      },
+    });
+
+    await res.status(200).json({ message: "Status Updated" });
+  } catch (error) {
+    await res.status(500).json({ message: error.message });
   }
 };
 

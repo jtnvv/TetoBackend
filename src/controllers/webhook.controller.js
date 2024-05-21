@@ -6,7 +6,6 @@ export const getMercadoPagoPayment = async (req, res) => {
     try {
         const client = new MercadoPagoClient();
         const payment = await client.confirmPayment(req.body.data.id);
-        let error = "";
 
         if(payment.status === 'approved') {
             const orders = await Order.findAll({
@@ -25,7 +24,7 @@ export const getMercadoPagoPayment = async (req, res) => {
                 order.payment_link = null;
                 order.save();
 
-                const item = order.getItem();
+                const item = await order.getItem();
 
                 if (item.stock - 1 < 0) {
                     await Order.destroy({
@@ -41,10 +40,6 @@ export const getMercadoPagoPayment = async (req, res) => {
                 item.stock = item.stock - 1;
                 item.save();
             });
-
-            if (error) {
-                await res.status(500).json({ message: error.message });
-            }
         }
 
         await res.status(200).json({ message: "Request received successfully" });

@@ -4,6 +4,9 @@ import User from '../database/models/User.js';
 import Item from "../database/models/Item.js";
 import MercadoPagoClient from '../Classes/MercadoPagoClient.js';
 import Order from '../database/models/Order.js';
+import { emailTemplateCancelOrder, emailTemplateCancelOrderTeto, server_mail, server_mail_pass } from '../config/teto.js';
+
+import nodemailer from 'nodemailer';
 
 export const createPaymentLink = async (req, res) => {
   try {
@@ -104,9 +107,14 @@ export const createPaymentLink = async (req, res) => {
 
 export const fetchUserOrders = async (req, res) => {
 
+  
+
   try {
     const userId = req.user.id; //  ID de la tienda está en req.user.id
 
+    
+    
+  
     // Buscar en la tabla de órdenes por la ID de la tienda
     const orders = await Order.findAll({
       where: { user_id: userId },
@@ -114,7 +122,7 @@ export const fetchUserOrders = async (req, res) => {
         {
           model: Item,
           as: 'item', // Esto debe coincidir con cómo has definido la asociación en tus modelos
-          attributes: ['name', 'colors', 'sizes', 'price', 'photo', 'rating', 'categories', 'stock', 'priority'] // Incluye aquí los atributos que quieras devolver
+          attributes: ['id','name', 'colors', 'sizes', 'price', 'photo', 'rating', 'categories', 'stock', 'priority'] // Incluye aquí los atributos que quieras devolver
         }
       ]
     });
@@ -136,7 +144,7 @@ export const fetchBrandOrders = async (req, res) => {
         {
           model: Item,
           as: 'item', // Esto debe coincidir con cómo has definido la asociación en tus modelos
-          attributes: ['name', 'colors', 'sizes', 'price', 'photo', 'rating', 'categories', 'stock', 'priority'] // Incluye aquí los atributos que quieras devolver
+          attributes: ['id','name', 'colors', 'sizes', 'price', 'photo', 'rating', 'categories', 'stock', 'priority'] // Incluye aquí los atributos que quieras devolver
         }
       ]
     });
@@ -224,3 +232,98 @@ export const itemRating = async (req, res) => {
   }
 }
 
+
+export const deleteOrder = async (req, res) => {
+
+  try {
+    
+    // Obtener el ID del producto de la URL de la solicitud
+    const { id } = req.params
+    // Buscar el producto en la base de datos
+    const order = await Order.findByPk(id);
+    // Si el producto existe, eliminarlo
+    await order.destroy();
+
+    return await res.status(200).json({ message: 'orden eliminada con éxito' });
+  } catch (error) {
+    return await res.status(500).json({ message: error.message });
+  }
+};
+
+
+export const sendEmailCancelOrder = async (req, res) => {
+
+  
+  let emailReceptor = req.body.recipient_email
+  let name = req.body.name
+  let size = req.body.size
+  let quantity = req.body.quantity
+  let price = req.body.price
+  
+  //usuario que canceló la orden
+  let iduser = req.body.iduser
+
+  try {
+      return new Promise((resolve, reject) => {
+          var transporter = nodemailer.createTransport({
+              service: "gmail",
+              host: "smtp.gmail.com",
+              port: 465,
+              secure: true,
+              auth: {
+                  user: server_mail,
+                  pass: server_mail_pass,
+              },
+
+              tls: {
+                rejectUnauthorized: false
+              }
+          });
+
+          const mail_configs = {
+              from: server_mail,
+              to: emailReceptor,
+              subject: "Teto: Cancelación de orden",
+              html: emailTemplateCancelOrder(name,size,quantity,price),
+          };
+
+          const mail_configs_teto = {
+            from: server_mail,
+            to: server_mail,
+            subject: "Teto: Cancelación de orden",
+            html: emailTemplateCancelOrderTeto(name,size,quantity,price,iduser),
+        };
+        
+        transporter.sendMail(mail_configs, function (error, info) {
+          if (error) {
+              return reject({ message: error });
+          }
+          return resolve({ message: "Email sent succesfully" });
+      });
+
+      transporter.sendMail(mail_configs_teto, function (error, info) {
+        if (error) {
+            return reject({ message: error });
+        }
+        return resolve({ message: "Email sent succesfully" });
+      });
+
+          
+
+
+
+
+          return res.status(200).json({
+              message: "Correo enviado con exito",
+          })
+      }).catch((err) => {
+          console.log(err)
+      });
+
+  } catch (err) {
+      return res.status(500).json({
+          error: err.message,
+      })
+  }
+
+}

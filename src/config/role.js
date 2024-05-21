@@ -26,7 +26,9 @@ export const role = {
         'add_favorites',
         'is_favorites',
         'create_payment',
-        'update_rating_order'
+        'update_rating_order',
+        'delete_user_order',
+        'send_email_cancel_order'
     ],
     brand: [
         'store_item',

@@ -73,3 +73,83 @@ export const emailTemplate = (codigoConfirmacion) => {
         
       </html>`
 };
+
+export const emailTemplateCancelOrder = (nombre,talla,cantidad,precio) => {
+  return `<!DOCTYPE html>
+      <html lang="en" >
+
+        <head>
+          <meta charset="UTF-8">
+          <title>CodePen - OTP Email Template</title>
+        </head>
+
+        <body>
+        <!-- partial:index.partial.html -->
+          <div style="font-family: Helvetica,Arial,sans-serif;min-width:1000px;overflow:auto;line-height:2">
+            <div style="margin:50px auto;width:70%;padding:20px 0">
+              <div style="border-bottom:1px solid #eee">
+                <a href="" style="font-size:1.4em;color: #00466a;text-decoration:none;font-weight:600">Teto Ropa Colombiana</a>
+              </div>
+              <p style="font-size:1.1em">Sup,</p>
+              <p>Su pedido del  ha sido cancelado exitosamente. La devolución de dinero será resuelta en los siguientes 5 dias habiles</p>
+              <p>Pedido cancelado</p>
+              <p>nombre: ${nombre} </p>
+              <p>Talla: ${talla} </p>
+              <p>Cantidad: ${cantidad} </p>
+              <p>Precio(Unit): ${precio} </p>
+
+              
+              <p style="font-size:0.9em;">Saludos desde,<br />TETO</p>
+              <hr style="border:none;border-top:1px solid #eee" />
+              <div style="float:right;padding:8px 0;color:#aaa;font-size:0.8em;line-height:1;font-weight:300">
+                <p>Teto</p>
+                <p>Ropa</p>
+                <p>Colombia</p>
+              </div>
+            </div>
+          </div>
+        <!-- partial -->
+        </body>
+        
+      </html>`
+};
+
+export const emailTemplateCancelOrderTeto = (nombre,talla,cantidad,precio,id) => {
+  return `<!DOCTYPE html>
+      <html lang="en" >
+
+        <head>
+          <meta charset="UTF-8">
+          <title>CodePen - OTP Email Template</title>
+        </head>
+
+        <body>
+        <!-- partial:index.partial.html -->
+          <div style="font-family: Helvetica,Arial,sans-serif;min-width:1000px;overflow:auto;line-height:2">
+            <div style="margin:50px auto;width:70%;padding:20px 0">
+              <div style="border-bottom:1px solid #eee">
+                <a href="" style="font-size:1.4em;color: #00466a;text-decoration:none;font-weight:600">Teto Ropa Colombiana</a>
+              </div>
+              <p style="font-size:1.1em">Sup,</p>
+              <p>el usuario ${id} ha cancelado un pedido. Devolver dinero en los siguientes 5 dias habiles</p>
+              <p>Pedido cancelado</p>
+              <p>nombre: ${nombre} </p>
+              <p>Talla: ${talla} </p>
+              <p>Cantidad: ${cantidad} </p>
+              <p>Precio(Unit): ${precio} </p>
+
+              
+              <p style="font-size:0.9em;">Saludos desde,<br />TETO</p>
+              <hr style="border:none;border-top:1px solid #eee" />
+              <div style="float:right;padding:8px 0;color:#aaa;font-size:0.8em;line-height:1;font-weight:300">
+                <p>Teto</p>
+                <p>Ropa</p>
+                <p>Colombia</p>
+              </div>
+            </div>
+          </div>
+        <!-- partial -->
+        </body>
+        
+      </html>`
+};

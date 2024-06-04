@@ -28,7 +28,9 @@ export const role = {
         'create_payment',
         'update_rating_order',
         'delete_user_order',
-        'send_email_cancel_order'
+        'update_refund-order',
+        'send_email_cancel_order',
+        'send_email_refund_order'
     ],
     brand: [
         'store_item',

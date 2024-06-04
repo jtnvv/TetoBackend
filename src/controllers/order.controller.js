@@ -183,6 +183,19 @@ export const updateReceived = async (req, res) => {
   }
 };
 
+export const updateRefund = async (req, res) => {
+  try {
+    await Order.update({ received_status: false }, {
+      where: {
+        id: req.body.id,
+      },
+    });
+
+    await res.status(200).json({ message: "Status Updated" });
+  } catch (error) {
+    await res.status(500).json({ message: error.message });
+  }
+};
 export const updateOrderRating = async (req, res) => {
   try {
     const id = req.body.id; // ID de la orden
@@ -250,80 +263,170 @@ export const deleteOrder = async (req, res) => {
   }
 };
 
-
 export const sendEmailCancelOrder = async (req, res) => {
+  const emailReceptor = req.body.recipient_email;
+  const nameUser = req.body.nameUser;
+  const name = req.body.nameItem;
+  const size = req.body.size;
+  const quantity = req.body.quantity;
+  const price = req.body.price;
+  const iduser = req.body.iduser;
 
-  
-  let emailReceptor = req.body.recipient_email
-  let name = req.body.name
-  let size = req.body.size
-  let quantity = req.body.quantity
-  let price = req.body.price
-  
-  //usuario que canceló la orden
-  let iduser = req.body.iduser
+  const action = "cancelado"
 
   try {
-      return new Promise((resolve, reject) => {
-          var transporter = nodemailer.createTransport({
-              service: "gmail",
-              host: "smtp.gmail.com",
-              port: 465,
-              secure: true,
-              auth: {
-                  user: server_mail,
-                  pass: server_mail_pass,
-              },
+    const transporter = nodemailer.createTransport({
+      service: "gmail",
+      host: "smtp.gmail.com",
+      port: 465,
+      secure: true,
+      auth: {
+        user: server_mail,
+        pass: server_mail_pass,
+      },
+      tls: {
+        rejectUnauthorized: false,
+      },
+    });
 
-              tls: {
-                rejectUnauthorized: false
-              }
-          });
+    const mailConfigs = {
+      from: server_mail,
+      to: emailReceptor,
+      subject: "Teto: Cancelación de orden",
+      html: emailTemplateCancelOrder(nameUser, name, size, quantity, price,action),
+    };
 
-          const mail_configs = {
-              from: server_mail,
-              to: emailReceptor,
-              subject: "Teto: Cancelación de orden",
-              html: emailTemplateCancelOrder(name,size,quantity,price),
-          };
+    const mailConfigsTeto = {
+      from: server_mail,
+      to: server_mail,
+      subject: "Teto: Cancelación de orden",
+      html: emailTemplateCancelOrderTeto(
+        nameUser,
+        name,
+        size,
+        quantity,
+        price,
+        iduser,
+        "",
+        action
+      ),
+    };
 
-          const mail_configs_teto = {
-            from: server_mail,
-            to: server_mail,
-            subject: "Teto: Cancelación de orden",
-            html: emailTemplateCancelOrderTeto(name,size,quantity,price,iduser),
-        };
-        
-        transporter.sendMail(mail_configs, function (error, info) {
-          if (error) {
-              return reject({ message: error });
-          }
-          return resolve({ message: "Email sent succesfully" });
-      });
+    // Enviar ambos correos al mismo tiempo
+    await Promise.all([
+      transporter.sendMail(mailConfigs),
+      transporter.sendMail(mailConfigsTeto),
+    ]);
 
-      transporter.sendMail(mail_configs_teto, function (error, info) {
-        if (error) {
-            return reject({ message: error });
-        }
-        return resolve({ message: "Email sent succesfully" });
-      });
-
-          
-
-
-
-
-          return res.status(200).json({
-              message: "Correo enviado con exito",
-          })
-      }).catch((err) => {
-          console.log(err)
-      });
-
+    return res.status(200).json({
+      message: "Correos enviados con éxito",
+    });
   } catch (err) {
-      return res.status(500).json({
-          error: err.message,
-      })
+    return res.status(500).json({
+      error: err.message,
+    });
   }
+};
 
-}
+
+export const sendEmailRefundOrder = async (req, res) => {
+  const emailReceptor = req.body.recipient_email;
+  const nameUser = req.body.nameUser;
+  const name = req.body.nameItem;
+  const size = req.body.size;
+  const quantity = req.body.quantity;
+  const price = req.body.price;
+  const idItem = req.body.id;
+  const direccion = req.body.address;
+  const iduser = req.body.iduser; // Usuario que pidió el reembolso
+
+  const action = "reembolsado"
+
+  try {
+    // Encontrar a qué tienda pertenece el artículo
+    const store = await Item.findOne({
+      where: {
+        id: idItem,
+      },
+    });
+
+    if (!store) {
+      return res.status(404).json({
+        error: "No se encontró la tienda asociada al artículo.",
+      });
+    }
+
+    const store_email = store.email;
+
+    const transporter = nodemailer.createTransport({
+      service: "gmail",
+      host: "smtp.gmail.com",
+      port: 465,
+      secure: true,
+      auth: {
+        user: server_mail,
+        pass: server_mail_pass,
+      },
+      tls: {
+        rejectUnauthorized: false,
+      },
+    });
+
+    const mail_configs = {
+      from: server_mail,
+      to: emailReceptor,
+      subject: "Teto: Reembolso de orden",
+      html: emailTemplateCancelOrder(nameUser, name, size, quantity, price,action),
+    };
+
+    const mail_configs_teto = {
+      from: server_mail,
+      to: server_mail,
+      subject: "Teto: Reembolso de orden",
+      html: emailTemplateCancelOrderTeto(
+        nameUser,
+        name,
+        size,
+        quantity,
+        price,
+        iduser,
+        direccion,
+        action
+      ),
+    };
+
+    const mail_configs_store = {
+      from: server_mail,
+      to: store_email,
+      subject: "Teto: Reembolso de orden",
+      html: emailTemplateCancelOrderTeto(
+        nameUser,
+        name,
+        size,
+        quantity,
+        price,
+        iduser,
+        direccion,
+        action
+      ),
+    };
+
+    // Enviar ambos correos al mismo tiempo
+    await Promise.all([
+      transporter.sendMail(mail_configs),
+      transporter.sendMail(mail_configs_teto),
+      transporter.sendMail(mail_configs_store)
+    ]);
+
+
+    return res.status(200).json({
+      message: "Correos enviado con éxito",
+    });
+  } catch (err) {
+    console.error("Error en la función sendEmailRefundOrder:", err);
+    return res.status(500).json({
+      error: err.message,
+    });
+  }
+};
+

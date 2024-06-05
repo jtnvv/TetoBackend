@@ -143,6 +143,11 @@ export const changePassword = async (req, res) => {
 
 export const sendEmail = async (req, res) => {
     let emailReceptor = req.body.recipient_email
+    if (!await User.findOne({ where: { email: emailReceptor } })) {
+        return res.status(409).json({
+            message: "El correo no se encuentra registrado",
+        })
+    }
     let codigoConfirmacion = req.body.OTP
     try {
         return new Promise((resolve, reject) => {

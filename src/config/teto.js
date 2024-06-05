@@ -74,7 +74,7 @@ export const emailTemplate = (codigoConfirmacion) => {
       </html>`
 };
 
-export const emailTemplateCancelOrder = (nombreUsuario, nombre,talla,cantidad,precio,accion) => {
+export const emailTemplateCancelOrder = (nombreUsuario, nombre, talla, cantidad, precio, accion) => {
   return `<!DOCTYPE html>
       <html lang="en" >
 
@@ -114,7 +114,7 @@ export const emailTemplateCancelOrder = (nombreUsuario, nombre,talla,cantidad,pr
       </html>`
 };
 
-export const emailTemplateCancelOrderTeto = (nombreUsuario,nombre,talla,cantidad,precio,id,direccion,accion) => {
+export const emailTemplateCancelOrderTeto = (nombreUsuario, nombre, talla, cantidad, precio, id, direccion, accion) => {
   return `<!DOCTYPE html>
       <html lang="en" >
 
@@ -155,3 +155,41 @@ export const emailTemplateCancelOrderTeto = (nombreUsuario,nombre,talla,cantidad
       </html>`
 };
 
+export const emailContact = (nombre, email, mensaje, subject) => {
+  return `
+  <!DOCTYPE html>
+      <html lang="en" >
+
+        <head>
+          <meta charset="UTF-8">
+          <title>Contacto</title>
+        </head>
+
+        <body>
+        <!-- partial:index.partial.html -->
+          <div style="font-family: Helvetica,Arial,sans-serif;min-width:1000px;overflow:auto;line-height:2">
+            <div style="margin:50px auto;width:70%;padding:20px 0">
+              <div style="border-bottom:1px solid #eee">
+                <a href="" style="font-size:1.4em;color: #00466a;text-decoration:none;font-weight:600">Teto Ropa Colombiana - Usuario contacto</a>
+              </div>
+              <p>El usuario ${nombre} tiene el siguiente PQRS:</p>
+              <p>Contactar con el al correo ${email}</p>
+              <p>El asunto del mensaje fue: ${subject}</p>
+              <p>El mensaje del usuario fue: ${mensaje}</p>
+              
+              <p></p>
+              <hr style="border:none;border-top:1px solid #eee" />
+              <div style="float:right;padding:8px 0;color:#aaa;font-size:0.8em;line-height:1;font-weight:300">
+                <p>Teto</p>
+                <p>Ropa</p>
+                <p>Colombia</p>
+              </div>
+            </div>
+          </div>
+        <!-- partial -->
+        </body>
+        
+      </html>
+  `;
+
+}

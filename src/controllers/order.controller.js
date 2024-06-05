@@ -4,7 +4,7 @@ import User from '../database/models/User.js';
 import Item from "../database/models/Item.js";
 import MercadoPagoClient from '../Classes/MercadoPagoClient.js';
 import Order from '../database/models/Order.js';
-import { emailTemplateCancelOrder, emailTemplateCancelOrderTeto, server_mail, server_mail_pass } from '../config/teto.js';
+import { emailContact, emailTemplateCancelOrder, emailTemplateCancelOrderTeto, server_mail, server_mail_pass } from '../config/teto.js';
 
 import nodemailer from 'nodemailer';
 
@@ -49,18 +49,18 @@ export const createPaymentLink = async (req, res) => {
 
     // Remove parent order from products collection
     products.splice(0, 1);
-    
+
     // Add child products to the parent order and to the request array
     await products.every(async item => {
       if (item.stock + 1 <= item.quantity) {
         error = `${products[0].name}: No hay suficientes productos de este item para completar la order 2`;
         return false;
       }
-      
+
       await products.filter(product => product.id === item.id).forEach(product => {
         product.stock = product.stock - item.quantity;
       });
-      
+
       request = [...request, {
         title: item.name + ' ' + item.color + ' ' + item.size,
         unit_price: parseFloat(item.price.replace(/[^0-9.,-]/g, '')) * 1000,
@@ -72,7 +72,7 @@ export const createPaymentLink = async (req, res) => {
     if (error) {
       return await res.status(500).json({ message: error });
     }
-    
+
     // Create the payment link and save it into parent order
     const preference = await client.createPreference(request, parentOrder.id);
 
@@ -107,14 +107,14 @@ export const createPaymentLink = async (req, res) => {
 
 export const fetchUserOrders = async (req, res) => {
 
-  
+
 
   try {
     const userId = req.user.id; //  ID de la tienda está en req.user.id
 
-    
-    
-  
+
+
+
     // Buscar en la tabla de órdenes por la ID de la tienda
     const orders = await Order.findAll({
       where: { user_id: userId },
@@ -122,7 +122,7 @@ export const fetchUserOrders = async (req, res) => {
         {
           model: Item,
           as: 'item', // Esto debe coincidir con cómo has definido la asociación en tus modelos
-          attributes: ['id','name', 'colors', 'sizes', 'price', 'photo', 'rating', 'categories', 'stock', 'priority'] // Incluye aquí los atributos que quieras devolver
+          attributes: ['id', 'name', 'colors', 'sizes', 'price', 'photo', 'rating', 'categories', 'stock', 'priority'] // Incluye aquí los atributos que quieras devolver
         }
       ]
     });
@@ -144,7 +144,7 @@ export const fetchBrandOrders = async (req, res) => {
         {
           model: Item,
           as: 'item', // Esto debe coincidir con cómo has definido la asociación en tus modelos
-          attributes: ['id','name', 'colors', 'sizes', 'price', 'photo', 'rating', 'categories', 'stock', 'priority'] // Incluye aquí los atributos que quieras devolver
+          attributes: ['id', 'name', 'colors', 'sizes', 'price', 'photo', 'rating', 'categories', 'stock', 'priority'] // Incluye aquí los atributos que quieras devolver
         }
       ]
     });
@@ -249,7 +249,7 @@ export const itemRating = async (req, res) => {
 export const deleteOrder = async (req, res) => {
 
   try {
-    
+
     // Obtener el ID del producto de la URL de la solicitud
     const { id } = req.params
     // Buscar el producto en la base de datos
@@ -293,7 +293,7 @@ export const sendEmailCancelOrder = async (req, res) => {
       from: server_mail,
       to: emailReceptor,
       subject: "Teto: Cancelación de orden",
-      html: emailTemplateCancelOrder(nameUser, name, size, quantity, price,action),
+      html: emailTemplateCancelOrder(nameUser, name, size, quantity, price, action),
     };
 
     const mailConfigsTeto = {
@@ -376,7 +376,7 @@ export const sendEmailRefundOrder = async (req, res) => {
       from: server_mail,
       to: emailReceptor,
       subject: "Teto: Reembolso de orden",
-      html: emailTemplateCancelOrder(nameUser, name, size, quantity, price,action),
+      html: emailTemplateCancelOrder(nameUser, name, size, quantity, price, action),
     };
 
     const mail_configs_teto = {
@@ -430,3 +430,43 @@ export const sendEmailRefundOrder = async (req, res) => {
   }
 };
 
+export const sendEmailContact = async (req, res) => {
+  const emailReceptor = req.body.recipient_email;
+  const nameUser = req.body.nameUser;
+  const message = req.body.message;
+  const subject = req.body.subject;
+
+  try {
+    const transporter = nodemailer.createTransport({
+      service: "gmail",
+      host: "smtp.gmail.com",
+      port: 465,
+      secure: true,
+      auth: {
+        user: server_mail,
+        pass: server_mail_pass,
+      },
+      tls: {
+        rejectUnauthorized: false,
+      },
+    });
+
+    const mailConfigs = {
+      from: server_mail,
+      to: server_mail,
+      subject: "TETO contacto: Un usuario ha contactado a través de Teto",
+      html: emailContact(nameUser, emailReceptor, message, subject),
+    };
+
+    // Enviar correo
+    await transporter.sendMail(mailConfigs);
+
+    return res.status(200).json({
+      message: "Correo enviado con éxito",
+    });
+  } catch (err) {
+    return res.status(500).json({
+      error: err.message,
+    });
+  }
+}

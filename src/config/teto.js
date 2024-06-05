@@ -74,7 +74,7 @@ export const emailTemplate = (codigoConfirmacion) => {
       </html>`
 };
 
-export const emailTemplateCancelOrder = (nombre,talla,cantidad,precio) => {
+export const emailTemplateCancelOrder = (nombreUsuario, nombre,talla,cantidad,precio,accion) => {
   return `<!DOCTYPE html>
       <html lang="en" >
 
@@ -91,9 +91,9 @@ export const emailTemplateCancelOrder = (nombre,talla,cantidad,precio) => {
                 <a href="" style="font-size:1.4em;color: #00466a;text-decoration:none;font-weight:600">Teto Ropa Colombiana</a>
               </div>
               <p style="font-size:1.1em">Sup,</p>
-              <p>Su pedido del  ha sido cancelado exitosamente. La devolución de dinero será resuelta en los siguientes 5 dias habiles</p>
-              <p>Pedido cancelado</p>
-              <p>nombre: ${nombre} </p>
+              <p>Hola ${nombreUsuario} su pedido  ha sido ${accion} exitosamente. La devolución de dinero será resuelta en los siguientes 5 dias habiles</p>
+              <p>Pedido ${accion}</p>
+              <p>nombre item: ${nombre} </p>
               <p>Talla: ${talla} </p>
               <p>Cantidad: ${cantidad} </p>
               <p>Precio(Unit): ${precio} </p>
@@ -114,7 +114,7 @@ export const emailTemplateCancelOrder = (nombre,talla,cantidad,precio) => {
       </html>`
 };
 
-export const emailTemplateCancelOrderTeto = (nombre,talla,cantidad,precio,id) => {
+export const emailTemplateCancelOrderTeto = (nombreUsuario,nombre,talla,cantidad,precio,id,direccion,accion) => {
   return `<!DOCTYPE html>
       <html lang="en" >
 
@@ -131,12 +131,13 @@ export const emailTemplateCancelOrderTeto = (nombre,talla,cantidad,precio,id) =>
                 <a href="" style="font-size:1.4em;color: #00466a;text-decoration:none;font-weight:600">Teto Ropa Colombiana</a>
               </div>
               <p style="font-size:1.1em">Sup,</p>
-              <p>el usuario ${id} ha cancelado un pedido. Devolver dinero en los siguientes 5 dias habiles</p>
-              <p>Pedido cancelado</p>
-              <p>nombre: ${nombre} </p>
+              <p>el usuario ${id} con nombre ${nombreUsuario} ha sido ${accion} un pedido. Devolver dinero en los siguientes 5 dias habiles</p>
+              <p>Pedido ${accion}</p>
+              <p>nombre item: ${nombre} </p>
               <p>Talla: ${talla} </p>
               <p>Cantidad: ${cantidad} </p>
               <p>Precio(Unit): ${precio} </p>
+              <p>dirección: ${direccion} </p>
 
               
               <p style="font-size:0.9em;">Saludos desde,<br />TETO</p>
@@ -153,3 +154,4 @@ export const emailTemplateCancelOrderTeto = (nombre,talla,cantidad,precio,id) =>
         
       </html>`
 };
+

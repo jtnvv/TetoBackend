@@ -129,16 +129,35 @@ export const getItemsById = async (req, res) => {
 
 export const getItemsByPriority = async (req, res) => {
   try {
-    const items = await Item.findAll({
-      order: [
-        ['priority', 'DESC'],
-      ],
-    });
-    return await res.status(200).json(items);
+    // Obtener todos los ítems
+    const items = await Item.findAll();
+
+    // Separar ítems por prioridad
+    const priorityItems = items.filter(item => item.priority);
+    const nonPriorityItems = items.filter(item => !item.priority);
+
+    // Función para mezclar aleatoriamente un arreglo
+    const shuffleArray = (array) => {
+      for (let i = array.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [array[i], array[j]] = [array[j], array[i]];
+      }
+    };
+
+    // Mezclar ambos arreglos de ítems
+    shuffleArray(priorityItems);
+    shuffleArray(nonPriorityItems);
+
+    // Combinar los ítems priorizados con los no priorizados
+    const randomizedItems = [...priorityItems, ...nonPriorityItems];
+
+    // Devolver los ítems mezclados
+    return res.status(200).json(randomizedItems);
   } catch (error) {
-    return await res.status(500).json({ message: error.message });
+    return res.status(500).json({ message: error.message });
   }
-}
+};
+
 
 export const addToFavorites = async (req, res) => {
   try {

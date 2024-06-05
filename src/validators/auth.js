@@ -27,9 +27,11 @@ const emailExists = check('email').custom(async (value) => {
 const loginFieldCheck = check('email').custom(async function (value, { req }) {
   let user = await User.findOne({ where: { email: value } });
   user = !user ? await Store.findOne({ where: { email: value } }) : user;
-
-  if (user.rowCounts) {
+  
+  if (user==null) {
+    
     throw new Error('No existe una cuenta para ese correo')
+    
   }
 
   const validPassword = await bcrypt.compare(req.body.password, user.password);

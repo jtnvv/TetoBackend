@@ -293,3 +293,28 @@ export const isOwner = async (req, res) => {
     return await res.status(500).json({ message: error.message });
   }
 }
+
+export const getRelated = async (req, res) => {
+  try {
+    const item = await Item.findOne({
+      where: {
+        id: req.params.item_id,
+      }
+    });
+    const relatedItems = await Item.findAll({
+      where: [{
+        categories: { [Op.contains] : [item.categories[0]]},
+      },{
+        id: { [Op.ne]: item.id },
+      }]
+    });
+
+    return await res.status(200).json({
+      products: relatedItems,
+    });
+  } catch (error) {
+    console.log(error);
+    return await res.status(500).json({ message: error.message });
+  }
+}
+

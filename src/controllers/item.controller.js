@@ -306,7 +306,8 @@ export const getRelated = async (req, res) => {
         categories: { [Op.contains] : [item.categories[0]]},
       },{
         id: { [Op.ne]: item.id },
-      }]
+      }],
+      limit: 10
     });
 
     return await res.status(200).json({

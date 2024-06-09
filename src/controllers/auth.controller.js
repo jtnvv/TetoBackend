@@ -189,3 +189,16 @@ export const sendEmail = async (req, res) => {
     }
 
 }
+
+export const isActive = async (req, res) => {
+    try {
+        return res.status(200).json({
+            message: req.user.role === 'inactive' ? false : true,
+        })
+    } catch (err) {
+        return res.status(500).json({
+            error: err.message,
+        })
+    }
+
+}

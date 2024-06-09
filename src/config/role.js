@@ -30,7 +30,8 @@ export const role = {
         'delete_user_order',
         'update_refund-order',
         'send_email_cancel_order',
-        'send_email_refund_order'
+        'send_email_refund_order',
+        'check_is_active'
     ],
     brand: [
         'store_item',
@@ -40,6 +41,11 @@ export const role = {
         'fetch_brand_orders',
         'update_order_status',
         'update_item',
-        'is_owner'
-    ]
+        'is_owner',
+        'check_is_active'
+    ],
+    inactive: [
+        'confirm_mail',
+        'check_is_active'
+    ],
 };

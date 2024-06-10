@@ -206,13 +206,12 @@ export const isActive = async (req, res) => {
 export const confirmMail = async (req, res) => {
     try {
         const user = req.user;
-        const confirmationCode = user.name.slice(user.name.length - 6);
+        const confirmationCode = user.verification_code;
         const receivedCode = req.body.code;
-        const name = user.name.slice(0, user.name.length - 6);
         
-        if (confirmationCode === receivedCode) {
-            user.role ='user';
-            user.name = name;
+        if (confirmationCode == receivedCode) {
+            user.role = user.verification_code <= 500000 ? 'user' : 'brand';
+            user.verification_code = null;
             user.save();
         } else { 
             return res.status(401).json({
@@ -222,6 +221,7 @@ export const confirmMail = async (req, res) => {
 
         return res.status(200).json({
             message: "Cuenta Activada",
+            role: user.role,
         })
     } catch (err) {
         return res.status(500).json({
@@ -239,11 +239,13 @@ export const activeAccount = async (req, res) => {
         })
     }
 
+    function getRandomNumber(min, max) {
+        return Math.floor(Math.random() * (max - min) + min);
+    }
     try {
-
-        const confirmationCode = Math.floor(100000 + Math.random() * 999999);
         const user = req.user;
-        user.name = user.name + confirmationCode;
+        const confirmationCode = user.verification_code < 1 || (user.verification_code >= 100000 && user.verification_code <= 500000) ? getRandomNumber(100000, 500000) : getRandomNumber(500001, 999999);
+        user.verification_code = confirmationCode;
         user.save(); 
 
         return new Promise((resolve, reject) => {

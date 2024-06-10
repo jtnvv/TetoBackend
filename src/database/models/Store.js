@@ -14,6 +14,7 @@ await Store.init(
     description: DataTypes.STRING,
     logo: DataTypes.STRING,
     role: DataTypes.STRING,
+    verification_code: DataTypes.INTEGER,
   },
   {
     sequelize,

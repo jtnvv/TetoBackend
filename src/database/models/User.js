@@ -36,6 +36,7 @@ User.init(
     password: DataTypes.STRING,
     phone_number: DataTypes.STRING,
     role: DataTypes.STRING,
+    verification_code: DataTypes.INTEGER,
   },
   {
     sequelize,

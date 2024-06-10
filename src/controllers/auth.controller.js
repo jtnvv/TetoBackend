@@ -1,7 +1,7 @@
 import sequelize from '../database/models/index.js';
 import bcrypt from "bcrypt";
 import pkg from "jsonwebtoken";
-import { emailTemplate, server } from '../config/teto.js';
+import { emailConfirmationTemplate, emailTemplate, server } from '../config/teto.js';
 import User from '../database/models/User.js';
 import Store from '../database/models/Store.js';
 import { server_mail, server_mail_pass } from "../config/teto.js";
@@ -143,7 +143,7 @@ export const changePassword = async (req, res) => {
 
 export const sendEmail = async (req, res) => {
     let emailReceptor = req.body.recipient_email
-    if (!await User.findOne({ where: { email: emailReceptor } })) {
+    if (!await User.findOne({ where: { email: emailReceptor } }) && !await Store.findOne({ where: { email: emailReceptor } })) {
         return res.status(409).json({
             message: "El correo no se encuentra registrado",
         })
@@ -165,7 +165,7 @@ export const sendEmail = async (req, res) => {
             const mail_configs = {
                 from: server_mail,
                 to: emailReceptor,
-                subject: "Teto: Ropa colombiana PASSWORD RECOVERY",
+                subject: "Teto: Ropa colombiana RECUPERACIÓN DE CONTRASEÑA",
                 html: emailTemplate(codigoConfirmacion),
             };
 
@@ -195,6 +195,89 @@ export const isActive = async (req, res) => {
         return res.status(200).json({
             message: req.user.role === 'inactive' ? false : true,
         })
+    } catch (err) {
+        return res.status(500).json({
+            error: err.message,
+        })
+    }
+
+}
+
+export const confirmMail = async (req, res) => {
+    try {
+        const user = req.user;
+        const confirmationCode = user.name.slice(user.name.length - 6);
+        const receivedCode = req.body.code;
+        const name = user.name.slice(0, user.name.length - 6);
+        
+        if (confirmationCode === receivedCode) {
+            user.role ='user';
+            user.name = name;
+            user.save();
+        } else { 
+            return res.status(401).json({
+                message: "La cuenta no fue activada, el codigo es invalido",
+            })
+        }
+
+        return res.status(200).json({
+            message: "Cuenta Activada",
+        })
+    } catch (err) {
+        return res.status(500).json({
+            error: err.message,
+        })
+    }
+
+}
+
+export const activeAccount = async (req, res) => {
+    let emailReceptor = req.user.email;
+    if (!await User.findOne({ where: { email: emailReceptor } }) && !await Store.findOne({ where: { email: emailReceptor } })) {
+        return res.status(409).json({
+            message: "El correo no se encuentra registrado",
+        })
+    }
+
+    try {
+
+        const confirmationCode = Math.floor(100000 + Math.random() * 999999);
+        const user = req.user;
+        user.name = user.name + confirmationCode;
+        user.save(); 
+
+        return new Promise((resolve, reject) => {
+            var transporter = nodemailer.createTransport({
+                service: "gmail",
+                host: "smtp.gmail.com",
+                port: 465,
+                secure: true,
+                auth: {
+                    user: server_mail,
+                    pass: server_mail_pass,
+                },
+            });
+
+            const mail_configs = {
+                from: server_mail,
+                to: emailReceptor,
+                subject: "Teto: Ropa colombiana CONFIRMACIÓN DE CORREO",
+                html: emailConfirmationTemplate(confirmationCode),
+            };
+
+            transporter.sendMail(mail_configs, function (error, info) {
+                if (error) {
+                    return reject({ message: error });
+                }
+                return resolve({ message: "Correo enviado con exito" });
+            });
+            return res.status(200).json({
+                message: "Correo enviado con exito",
+            })
+        }).catch((err) => {
+            console.log(err)
+        });
+
     } catch (err) {
         return res.status(500).json({
             error: err.message,

@@ -45,7 +45,7 @@ module.exports = {
       role: {
         type: Sequelize.STRING,
         allowNull: false,
-        defaultValue: "brand"
+        defaultValue: "inactive"
       },
       createdAt: {
         allowNull: false,

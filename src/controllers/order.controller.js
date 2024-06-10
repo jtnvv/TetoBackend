@@ -171,7 +171,7 @@ export const updateSend = async (req, res) => {
 
 export const updateReceived = async (req, res) => {
   try {
-    await Order.update({ received_status: true }, {
+    await Order.update({ received_status: true, received_at: Date.now() }, {
       where: {
         id: req.body.id,
       },
